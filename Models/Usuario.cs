@@ -1,0 +1,36 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+
+namespace MecHub.Models
+{
+    public class Usuario
+    {
+        public int Id { get; set; }
+        
+        [StringLength(100)]
+        public required string Nome { get; set; }
+
+        [StringLength(355)]
+        public required string Senha { get; set; }
+
+        [Column("tipo_login")]
+        public TipoLoginEnum  TipoLogin { get; set; }
+
+        [Column("id_google")]
+        public string? IdGoogle { get; set; }
+
+        [Column("data_criacao")]
+        public DateTime DataCriacao { get; set; } = DateTime.Now;
+
+        public required string Email { get; set; }
+
+        // Relacionamento
+        public Mecanico? Mecanico { get; set; }
+    }
+    public enum TipoLoginEnum
+        {
+            Local,
+            Google
+        }
+}
