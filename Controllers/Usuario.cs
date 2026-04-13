@@ -74,6 +74,7 @@ namespace MecHub.Controllers
             _context.SaveChanges();
 
             return Content("Usuário deletado!");
+            
         }
     }
 }

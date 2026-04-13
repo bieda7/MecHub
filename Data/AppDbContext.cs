@@ -12,11 +12,11 @@ namespace MecHub.Data
     public DbSet<Cliente> cliente { get; set; } = null!;
     public DbSet<Usuario> usuario {get; set; } = null!;
     public DbSet<Mecanico> mecanico {get; set; } = null!;
-    public DbSet<Veiculo> veiculos {get; set; } = null!;
-    public DbSet<Servico> servicos {get; set; } = null!;
-    public DbSet<StatusOrdem> statusOrdens {get; set; } = null!;
-    public DbSet<OrdemServico> ordensServicos {get; set; } = null!;
-    public DbSet<ItemOrdemServico> itensOrdemServico {get; set; } = null!;
+    public DbSet<Veiculo> veiculo {get; set; } = null!;
+    public DbSet<Servico> servico {get; set; } = null!;
+    public DbSet<StatusOrdem> status_ordem {get; set; } = null!;
+    public DbSet<OrdemServico> ordem_servico {get; set; } = null!;
+    public DbSet<ItemOrdemServico> item_ordem_servico {get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

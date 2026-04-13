@@ -1,11 +1,17 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace MecHub.Models
 {
     public class Mecanico
     {
+        [Column("id")] // nome real no banco
         public int Id { get; set; }
-
+        
+        
+        [Column("usuario_id")] // nome real no banco
         public int UsuarioId { get; set; }
 
+        [Column("telefone")] // nome real no banco
         public required string Telefone { get; set; }
 
         // Relacionamentos

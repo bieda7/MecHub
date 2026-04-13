@@ -1,7 +1,22 @@
 using Microsoft.EntityFrameworkCore;
 using MecHub.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication(options => 
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddGoogle(options =>
+{
+    options.ClientId = "332036407856-q5a4k358e7ntlftp0frl181ek2f179oi.apps.googleusercontent.com";
+}
+);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(

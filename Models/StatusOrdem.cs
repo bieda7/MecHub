@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace MecHub.Models
 {
     public class StatusOrdem
