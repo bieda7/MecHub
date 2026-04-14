@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MecHub.Data;
 using MecHub.Models;
 
+
 namespace MecHub.Controllers
 {
     public class UsuarioController : Controller
