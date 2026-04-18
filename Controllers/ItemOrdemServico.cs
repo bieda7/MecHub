@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MecHub.Data;
 using MecHub.Models;
+using MecHub.ViewModel;
 
 namespace MecHub.Controllers
 {
@@ -14,6 +15,7 @@ namespace MecHub.Controllers
         }
 
         // Listar todos os itens
+        [HttpGet]
         public IActionResult Index()
         {
             var itens = _context.item_ordem_servico.ToList();
@@ -21,90 +23,132 @@ namespace MecHub.Controllers
         }
 
         // Buscar item por ID
+        [HttpGet]
         public IActionResult Detalhes(int id)
         {
             var item = _context.item_ordem_servico.Find(id);
 
             if (item == null)
-                return Content("Item não encontrado");
+                return NotFound();
 
-            return Json(item);
+            return View(item);
+        }
+
+        [HttpGet]
+        public IActionResult Criar()
+        {
+            return View();
         }
 
         // Criar item (ligando a uma OS já existente)
-        public IActionResult Criar()
+        [HttpPost]
+        public IActionResult Criar(ItemOrdemServicoCreateViewModel model)
         {
             var item = new ItemOrdemServico
             {
-                OrdemServicoId = 3, // ⚠️ precisa existir
-                ServicoId = 1,      // ⚠️ precisa existir
-                Quantidade = 2
+                OrdemServicoId = model.OrdemServicoId, // precisa existir
+                ServicoId = model.ServicoId,      // precisa existir
+                Quantidade = model.Quantidade
             };
 
-            _context.item_ordem_servico.Add(item);
-            _context.SaveChanges();
 
-            return Json(item);
+            try
+            {
+                _context.item_ordem_servico.Add(item);
+                _context.SaveChanges();
+
+                return View(item);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Erro ao criar item.");
+                return View(model);
+            }
+
         }
 
         // Deletar item
+        [HttpGet]
         public IActionResult Deletar(int id)
         {
             var item = _context.item_ordem_servico.Find(id);
 
             if (item == null)
-                return Content("Item não encontrado");
+                return NotFound();
 
             _context.item_ordem_servico.Remove(item);
             _context.SaveChanges();
 
-            return Content("Item deletado com sucesso!");
+            return View();
         }
 
+        [HttpPost]
+        public IActionResult DeletarConfirmado(int id)
+        {
+            var item = _context.item_ordem_servico.Find(id);
+
+            try
+            {
+                _context.item_ordem_servico.Remove(item);
+                _context.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Erro ao deletar item.");
+                return View(item);
+            }
+        }
+
+
         // Editar item
+        [HttpGet]
         public IActionResult Editar(int id)
         {
             var item = _context.item_ordem_servico.Find(id);
 
             if (item == null)
-                return Content("Item não encontrado");
+                return NotFound();
 
-            item.Quantidade += 1;
-            _context.SaveChanges();
-
-            return Content("Item atualizado!");
-        }
-
-        public IActionResult CriarComItens()
-        {
-            var ordemServico = new OrdemServico
+            var model = new ItemOrdemServicoEditViewModel
             {
-                MecanicoId = 9,
-                ClienteId = 3,
-                VeiculoId = 3,
-                StatusId = 2,
-                DataCriacao = DateTime.Now,
-
-                // 👇 Aqui está o segredo
-                Itens = new List<ItemOrdemServico>
-                {
-                    new ItemOrdemServico
-                    {
-                        ServicoId = 1,
-                        Quantidade = 2
-                    },
-                    new ItemOrdemServico
-                    {
-                        ServicoId = 2,
-                        Quantidade = 1
-                    }
-                }
+                ServicoId = item.ServicoId,
+                Quantidade = item.Quantidade
             };
-
-            _context.ordem_servico.Add(ordemServico);
-            _context.SaveChanges();
-
-            return Json(ordemServico);
+            return View();
         }
+
+        [HttpPost]
+        public IActionResult Editar(int id, ItemOrdemServicoEditViewModel model)
+        {
+            if (id != model.Id)
+                return BadRequest();
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var item = _context.item_ordem_servico.Find(id);
+
+            if (item == null)
+                return NotFound();
+
+            item.ServicoId = model.ServicoId;
+            item.Quantidade = model.Quantidade;
+            // usuario.Senha = model.Senha;
+
+            try
+            {
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Erro ao atualizar item ordem.");
+                return View(model);
+            }
+        }
+
+        
     }
 }

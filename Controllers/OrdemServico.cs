@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MecHub.Data;
 using MecHub.Models;
 using Microsoft.EntityFrameworkCore;
-
+using MecHub.ViewModel;
 namespace MecHub.Controllers
 {
     public class OrdemServicoController : Controller
@@ -85,5 +85,39 @@ namespace MecHub.Controllers
             return Content("Ordem Atualizada");
         }
 
+        [HttpPost]
+        public IActionResult CriarComItens(OrdemServicoCreateViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var ordemServico = new OrdemServico
+            {
+                MecanicoId = model.MecanicoId,
+                ClienteId = model.ClienteId,
+                VeiculoId = model.VeiculoId,
+                StatusId = model.StatusId,
+                DataCriacao = DateTime.Now,
+
+                Itens = model.Itens.Select(i => new ItemOrdemServico
+                {
+                    ServicoId = i.ServicoId,
+                    Quantidade = i.Quantidade
+                }).ToList()
+            };
+
+            try
+            {
+                _context.ordem_servico.Add(ordemServico);
+                _context.SaveChanges();
+
+                return RedirectToAction("Index"); // ou detalhes
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Erro ao criar ordem de serviço.");
+                return View(model);
+            }
+        }
     }
 }

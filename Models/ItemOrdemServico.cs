@@ -21,5 +21,6 @@ namespace MecHub.Models
         [JsonIgnore]
         public OrdemServico? OrdemServico { get; set; } 
         public Servico? Servico { get; set; }
+        
     }
 }

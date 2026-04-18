@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Authentication.Google;
 using MecHub.Data;
 using MecHub.Models;
 using System.Security.Claims;
-
+using Microsoft.AspNetCore.Identity;
+using MecHub.ViewModel;
 
 public class AuthController : Controller
 {
@@ -20,7 +21,73 @@ public class AuthController : Controller
     {
         return Content("<a href='/Auth/LoginGoogle'>Login com Google</a>", "text/html");
     }
+    [HttpGet]
+    public IActionResult LoginLocal()
+    {
+        return View();
+    }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> LoginLocal(LoginViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        // 🔍 Buscar usuário
+        var usuario = _context.usuario
+            .FirstOrDefault(u => u.Email == model.Email);
+
+        if (usuario == null)
+        {
+            ModelState.AddModelError("", "Usuário ou senha inválidos");
+            return View(model);
+        }
+
+        // 🔐 Verificar senha com HASH
+        var hasher = new PasswordHasher<Usuario>();
+
+        var resultado = hasher.VerifyHashedPassword(
+            usuario,
+            usuario.Senha,
+            model.Senha
+        );
+
+        if (resultado == PasswordVerificationResult.Failed)
+        {
+            ModelState.AddModelError("", "Usuário ou senha inválidos");
+            return View(model);
+        }
+
+        // 🧠 Criar Claims
+        var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, usuario.Nome),
+        new Claim(ClaimTypes.Email, usuario.Email),
+        new Claim("UserId", usuario.Id.ToString())
+    };
+
+        var identity = new ClaimsIdentity(
+            claims,
+            CookieAuthenticationDefaults.AuthenticationScheme
+        );
+
+        var principal = new ClaimsPrincipal(identity);
+
+        // 🍪 Login (cookie)
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            principal,
+            new AuthenticationProperties
+            {
+                IsPersistent = model.LembrarMe
+            }
+        );
+
+        return RedirectToAction("Index", "Home");
+    }
+
+    [HttpGet]
     public IActionResult LoginGoogle()
     {
         var redirectUrl = Url.Action("GoogleResponse");
@@ -29,13 +96,14 @@ public class AuthController : Controller
         return Challenge(properties, GoogleDefaults.AuthenticationScheme);
     }
 
+    [HttpPost]
     public async Task<IActionResult> GoogleResponse()
     {
         var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
         if (!result.Succeeded || result.Principal == null)
         {
-           return Content("Falha ao autenticar usuário");
+            return Content("Falha ao autenticar usuário");
         }
 
         var claims = result.Principal.Identities.FirstOrDefault()?.Claims;
@@ -59,7 +127,7 @@ public class AuthController : Controller
                 Nome = nome,
                 Email = email,
                 IdGoogle = googleId,
-                Senha = ""
+                // Senha = ""
             };
 
             _context.Add(usuario);

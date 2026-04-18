@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using MecHub.Data;
 using MecHub.Models;
-
+using MecHub.ViewModel;
 
 namespace MecHub.Controllers
 {
@@ -14,68 +15,162 @@ namespace MecHub.Controllers
             _context = context;
         }
 
-        // Listar/Read usuarios
+        // 🔹 LISTAR
+        [HttpGet]
         public IActionResult Index()
         {
-            var usuarios = _context.usuario.ToList();
-            return Json(usuarios); // Apenas para teste
+            var usuarios = _context.usuario
+                .Select(u => new UsuarioListViewModel
+                {
+                    Id = u.Id,
+                    Nome = u.Nome,
+                    Email = u.Email,
+                    TipoLogin = u.TipoLogin
+                })
+                .ToList();
+
+            return View(usuarios);
         }
 
-        // Listar/Read usuario por ID
+        // 🔹 DETALHE
+        [HttpGet]
         public IActionResult Detalhe(int id)
         {
             var usuario = _context.usuario.Find(id);
 
             if (usuario == null)
-                return Content("Usuário não encontrado");
+                return NotFound();
 
-            return Json(usuario);
+            return View(usuario);
         }
 
-        // Inserir/Create usuarios
+        // 🔹 CRIAR (GET)
+        [HttpGet]
         public IActionResult Criar()
         {
+            return View();
+        }
+
+        // 🔹 CRIAR (POST)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Criar(UsuarioCreateViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var hasher = new PasswordHasher<Usuario>();
+
             var usuario = new Usuario
             {
-                Nome = "Teste2",
-                Senha = "12345",
-                TipoLogin = TipoLoginEnum.Local,
-                Email = "teste2@email.com",
+                Nome = model.Nome,
+                Email = model.Email,
                 DataCriacao = DateTime.Now
             };
 
-            _context.usuario.Add(usuario);
-            _context.SaveChanges();
+            usuario.Senha = hasher.HashPassword(usuario, model.Senha);
 
-            return Content("Usuário criado com sucesso!");
+            try
+            {
+                _context.usuario.Add(usuario);
+                _context.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Erro ao criar usuário.");
+                return View(model);
+            }
         }
-        
-        // Editar/Update usuario
+
+        // 🔹 EDITAR (GET)
+        [HttpGet]
         public IActionResult Editar(int id)
         {
             var usuario = _context.usuario.Find(id);
 
             if (usuario == null)
-                return Content("Usuário não encontrado");
+                return NotFound();
 
-            usuario.Nome = "Nome Atualizado";
-            _context.SaveChanges();
+            var model = new UsuarioEditViewModel
+            {
+                Id = usuario.Id,
+                Nome = usuario.Nome,
+                Email = usuario.Email
+                // Senha normalmente NÃO volta para edição direta
+            };
 
-            return Content("Usuário Atualizado");
+            return View(model);
         }
 
+        // 🔹 EDITAR (POST)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Editar(int id, UsuarioEditViewModel model)
+        {
+            if (id != model.Id)
+                return BadRequest();
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var usuario = _context.usuario.Find(id);
+
+            if (usuario == null)
+                return NotFound();
+
+            usuario.Nome = model.Nome;
+            usuario.Email = model.Email;
+            // usuario.Senha = model.Senha;
+
+            try
+            {
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Erro ao atualizar usuário.");
+                return View(model);
+            }
+        }
+
+        // 🔹 DELETAR (GET - confirmação)
+        [HttpGet]
         public IActionResult Deletar(int id)
         {
             var usuario = _context.usuario.Find(id);
 
             if (usuario == null)
-                return Content("Usuário não encontrado");
+                return NotFound();
 
-            _context.usuario.Remove(usuario);
-            _context.SaveChanges();
+            return View(usuario);
+        }
 
-            return Content("Usuário deletado!");
-            
+        // 🔹 DELETAR (POST)
+        [HttpPost]
+        [ActionName("Deletar")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletarConfirmado(int id)
+        {
+            var usuario = _context.usuario.Find(id);
+
+            if (usuario == null)
+                return NotFound();
+
+            try
+            {
+                _context.usuario.Remove(usuario);
+                _context.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Erro ao deletar usuário.");
+                return View(usuario);
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MecHub.Data;
 using MecHub.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using MecHub.ViewModel;
 
 namespace MecHub.Controllers
 {
@@ -14,70 +16,150 @@ namespace MecHub.Controllers
             _context = context;
         }
 
-        // Listar/Read clientes
+        [HttpGet]
+        // Listar clientes
         public IActionResult Index()
         {
             var clientes = _context.cliente.ToList();
-            return Json(clientes); // Apenas para teste
+            return View(clientes);    
         }
 
+        [HttpGet]
         public IActionResult Detalhe(int id)
         {
             var cliente = _context.cliente.Find(id);
 
             if (cliente == null)
-                return Content("Cliente não encontrado");
+                return NotFound();
 
-            return Json(cliente);
+            return View(cliente);
         }
 
 
-
-        // Criar clientes
+        [HttpGet]
         public IActionResult Criar()
         {
-            var cliente = new Cliente
-            {
-                Nome = "Guilherme",
-                Telefone = "11999999999",
-                Cpf = "134.526.859-60"
-            };
-
-            _context.cliente.Add(cliente);
-            _context.SaveChanges();
-
-            return Content("Cliente criado com sucesso!");
+            return View();   
         }
 
-        // Editar clientes
+        // Criar clientes
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Criar(ClienteCreateViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var cliente = new Cliente
+            {
+                Nome = model.Nome,
+                Telefone = model.Telefone,
+                Cpf = model.Cpf
+            };
+
+            try
+            {
+                _context.cliente.Add(cliente);
+                _context.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                // Log futuramente (ILogger)
+                ModelState.AddModelError("", "Não foi possível salvar o cliente. Tente novamente.");
+
+                return View(model);
+            }
+        }
+
+        [HttpGet]
         public IActionResult Editar(int id)
         {
             var cliente = _context.cliente.Find(id);
 
             if (cliente == null)
-                return Content("Usuário não encontrado");
+                return NotFound();
+           
+            var model = new ClienteEditViewModel
+            {
+                Nome = cliente.Nome,
+                Telefone = cliente.Telefone,
+                Cpf = cliente.Cpf
 
-            cliente.Nome = "Nome Atualizado";
-            _context.SaveChanges();
-
-            return Content("Cliente Atualizado");
+            };
+            return View(model);
         }
 
-        // Deletar clientes
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        // Editar clientes
+        public IActionResult Editar(int id, ClienteEditViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var cliente = _context.cliente.Find(id);
+
+            if (id != model.Id)
+                return BadRequest();
+
+            if (cliente == null)
+                return NotFound();
+
+            cliente.Nome = model.Nome;
+            cliente.Telefone = model.Telefone;
+            cliente.Cpf = model.Cpf;
+
+            try
+            {
+                _context.SaveChanges();    
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Erro ao tentar editar dados do cliente.");
+                return View(model);
+            }
+        }
+
+        [HttpGet]
         public IActionResult Deletar(int id)
         {
             var cliente = _context.cliente.Find(id);
 
             if (cliente == null)
-                return Content("Cliente não encontrado");
+                return NotFound();
 
-            _context.cliente.Remove(cliente);
-            _context.SaveChanges();
+            return View(cliente);
+        }
+        
+        [HttpPost]
+        [ActionName("Deletar")]
+        [ValidateAntiForgeryToken]
+        // Deletar clientes
+        public IActionResult DeletarConfirmado(int id)
+        {
+            var cliente = _context.cliente.Find(id);
 
-            return Content("Cliente deletado!");
+            if (cliente == null)
+                return NotFound();
+
+            try
+            {
+                _context.cliente.Remove(cliente);
+                _context.SaveChanges();
+
+                return RedirectToAction("Index");   
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Erro ao tentar deletar o cliente.");
+                return View(cliente);
+            }
+            
             
         }
-
 
     }
 }

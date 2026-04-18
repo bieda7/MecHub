@@ -12,7 +12,7 @@ namespace MecHub.Models
         public required string Nome { get; set; }
 
         [StringLength(355)]
-        public required string Senha { get; set; }
+        public string Senha { get; set; } = string.Empty;
 
         [Column("tipo_login")]
         public TipoLoginEnum  TipoLogin { get; set; }

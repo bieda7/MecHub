@@ -3,6 +3,21 @@ using MecHub.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
+
+var supportedCultures = new[]
+{
+    new CultureInfo("pt-BR"),
+    new CultureInfo("en-US")
+};
+
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("pt-BR"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+};
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +33,8 @@ builder.Services.AddAuthentication(options =>
     options.ClientSecret = "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";
 }
 );
+
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
@@ -44,6 +61,8 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseRequestLocalization(localizationOptions);
+
 app.MapStaticAssets();
 
 app.MapControllerRoute(
@@ -60,6 +79,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Usuario}/{action=Index}/{id?}")
     .WithStaticAssets();
+
 
 
 app.Run();

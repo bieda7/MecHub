@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MecHub.Data;
 using MecHub.Models;
 using System.Windows.Markup;
+using MecHub.ViewModel;
 
 namespace MecHub.Controllers
 {
@@ -14,25 +15,34 @@ namespace MecHub.Controllers
             _context = context;
         }
         // Listar mecanicos
+        [HttpGet]
         public IActionResult Index()
         {
             var mecanicos = _context.mecanico.ToList();
-            return Json(mecanicos); // Apenas para teste
+            return View(mecanicos);
         }
 
         //listar/Read Mecanicos por ID
+        [HttpGet]
         public IActionResult Detalhe(int id)
         {
             var mecanicos = _context.mecanico.Find(id);
 
             if (mecanicos == null)
-                return Content("Mecanico não encontrado");
+                return NotFound();
 
-            return Json(mecanicos);
+            return View(mecanicos);
         }
 
         // Inserir/Create mecanicos
+        [HttpGet]
         public IActionResult Criar()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Criar(MecanicoViewModel model)
         {
             
             var mecanico = new Mecanico
