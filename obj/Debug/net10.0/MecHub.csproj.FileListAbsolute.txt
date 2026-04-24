@@ -173,3 +173,7 @@ C:\Users\Guilherne\MecHub\obj\Debug\net10.0\ref\MecHub.dll
 C:\Users\Guilherne\MecHub\bin\Debug\net10.0\AutoMapper.dll
 C:\Users\Guilherne\MecHub\bin\Debug\net10.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\Guilherne\MecHub\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.Google.dll
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.csproj.GenerateResource.cache
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.Resources.SharedResource.resources
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.Resources.Messages-pt-br.resources
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.Resources.Messages-us-en.resources

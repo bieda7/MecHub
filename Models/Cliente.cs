@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MecHub.Models
 {
+    [Table("cliente")]
     public class Cliente
     {
         [Column("id")]
@@ -15,6 +16,9 @@ namespace MecHub.Models
 
         [Column("cpf")]
         public required string Cpf { get; set; }
+
+        [Column("email")]
+        public required string Email {get; set; }
         public List<Veiculo> Veiculos { get; set; } = new();
     }
 }

@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MecHub.Models
 {
+    [Table("mecanico")]
     public class Mecanico
     {
         [Column("id")] // nome real no banco

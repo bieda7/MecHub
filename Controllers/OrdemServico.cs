@@ -47,7 +47,6 @@ namespace MecHub.Controllers
                 MecanicoId = 9,
                 ClienteId = 3,
                 VeiculoId = 3,
-                StatusId = 2,
                 DataCriacao = DateTime.Now
             };
 
@@ -96,7 +95,6 @@ namespace MecHub.Controllers
                 MecanicoId = model.MecanicoId,
                 ClienteId = model.ClienteId,
                 VeiculoId = model.VeiculoId,
-                StatusId = model.StatusId,
                 DataCriacao = DateTime.Now,
 
                 Itens = model.Itens.Select(i => new ItemOrdemServico

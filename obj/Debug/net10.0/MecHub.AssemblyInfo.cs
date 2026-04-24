@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MecHub")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e277d602bf996a747d59db6217227461353d8d37")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+99aca2e648c80875a3a2b4cb3860aaa5ee0c8863")]
 [assembly: System.Reflection.AssemblyProductAttribute("MecHub")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MecHub")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

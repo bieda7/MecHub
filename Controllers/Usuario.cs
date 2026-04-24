@@ -65,7 +65,8 @@ namespace MecHub.Controllers
             {
                 Nome = model.Nome,
                 Email = model.Email,
-                DataCriacao = DateTime.Now
+                DataCriacao = DateTime.Now,
+                TipoLogin = TipoLoginEnum.Local
             };
 
             usuario.Senha = hasher.HashPassword(usuario, model.Senha);
@@ -73,6 +74,15 @@ namespace MecHub.Controllers
             try
             {
                 _context.usuario.Add(usuario);
+                _context.SaveChanges();
+
+                var mecanico = new Mecanico
+                {
+                    UsuarioId = usuario.Id,
+                    Telefone = model.Telefone
+                };
+
+                _context.mecanico.Add(mecanico);
                 _context.SaveChanges();
 
                 return RedirectToAction("Index");

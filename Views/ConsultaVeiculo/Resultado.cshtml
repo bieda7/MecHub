@@ -1,0 +1,132 @@
+@model MecHub.ViewModel.VeiculoResultadoConsultaViewModel
+
+@{
+    ViewData["Title"] = "Status do Veículo";
+
+    var porcentagem = Model.EtapaAtual switch
+    {
+        1 => 0,
+        2 => 33,
+        3 => 66,
+        4 => 100,
+        _ => 0
+    };
+}
+
+<div class="container mt-5">
+
+    <div class="card shadow border-0 mb-4">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">Status da Manutenção</h4>
+        </div>
+
+        <div class="card-body p-4">
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p><strong>Veículo:</strong> @Model.Marca @Model.Modelo</p>
+                    <p><strong>Placa:</strong> @Model.Placa</p>
+                    <p><strong>Cor:</strong> @Model.Cor</p>
+                </div>
+
+                <div class="col-md-6">
+                    <p><strong>Cliente:</strong> @Model.NomeCliente</p>
+                    <p><strong>Status atual:</strong> @Model.StatusAtual</p>
+                    <p><strong>Última atualização:</strong> @Model.DataAtualizacaoStatus.ToString("dd/MM/yyyy HH:mm")</p>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.ObservacaoStatus))
+            {
+                <div class="alert alert-info">
+                    <strong>Observação do mecânico:</strong>
+                    <br />
+                    @Model.ObservacaoStatus
+                </div>
+            }
+
+            <hr />
+
+            <h5 class="mb-3">Andamento</h5>
+
+            <div class="progress mb-4" style="height: 25px;">
+                <div class="progress-bar" role="progressbar"
+                     style="width: @porcentagem%;"
+                     aria-valuenow="@porcentagem"
+                     aria-valuemin="0"
+                     aria-valuemax="100">
+                    @porcentagem%
+                </div>
+            </div>
+
+            <div class="row text-center">
+                @for (int i = 0; i < Model.Etapas.Count; i++)
+                {
+                    var numeroEtapa = i + 1;
+                    var concluida = numeroEtapa <= Model.EtapaAtual;
+
+                    <div class="col-md-3 mb-3">
+                        <div class="p-3 rounded border @(concluida ? "bg-success text-white" : "bg-light")">
+                            <strong>@numeroEtapa</strong>
+                            <br />
+                            @Model.Etapas[i]
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card shadow border-0 mb-4">
+        <div class="card-body p-4">
+            <h5>Ordem de Serviço</h5>
+
+            @if (Model.PossuiOrdemServico)
+            {
+                <p>A Ordem de Serviço já está disponível.</p>
+
+                <a asp-controller="OrdemServico"
+                   asp-action="DownloadPdf"
+                   asp-route-id="@Model.OrdemServicoId"
+                   class="btn btn-outline-primary">
+                    Baixar OS em PDF
+                </a>
+            }
+            else
+            {
+                <p class="text-muted">
+                    A Ordem de Serviço ainda não foi gerada.
+                </p>
+            }
+        </div>
+    </div>
+
+    <div class="card shadow border-0">
+        <div class="card-body p-4">
+            <h5>Contato do mecânico responsável</h5>
+
+            <p><strong>Nome:</strong> @Model.NomeMecanico</p>
+
+            @if (!string.IsNullOrWhiteSpace(Model.TelefoneMecanico))
+            {
+                <p><strong>Telefone:</strong> @Model.TelefoneMecanico</p>
+
+                <a href="tel:@Model.TelefoneMecanico" class="btn btn-success">
+                    Ligar para o mecânico
+                </a>
+            }
+            else
+            {
+                <p class="text-muted">Telefone não informado.</p>
+            }
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-secondary">
+            Nova consulta
+        </a>
+    </div>
+
+</div>

@@ -42,7 +42,7 @@ namespace MecHub.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Criar(MecanicoViewModel model)
+        public IActionResult Criar(MecanicoCreateViewModel model)
         {
             
             var mecanico = new Mecanico

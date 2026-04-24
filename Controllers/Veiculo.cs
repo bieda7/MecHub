@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MecHub.Data;
 using MecHub.Models;
+using MecHub.ViewModel;
 
 namespace MecHub.Controllers
 {
@@ -13,7 +14,7 @@ namespace MecHub.Controllers
             _context = context;
         }
 
-         // Listar status ordens
+        // Listar status ordens
         public IActionResult Index()
         {
             var veiculos = _context.veiculo.ToList();
@@ -46,7 +47,7 @@ namespace MecHub.Controllers
 
             if (veiculo == null)
                 return Content("Veiculo não encontrado");
-            
+
             _context.veiculo.Remove(veiculo);
             _context.SaveChanges();
 
@@ -76,6 +77,48 @@ namespace MecHub.Controllers
                 return Content("Veiculo não encontrado");
             return Json(veiculo);
         }
+        [HttpGet]
+        public IActionResult AtualizarStatus(int id)
+        {
+            var veiculo = _context.veiculo.FirstOrDefault(v => v.Id == id);
 
+            if (veiculo == null)
+                return NotFound();
+
+            var model = new VeiculoAtualizarStatusViewModel
+            {
+                Id = veiculo.Id,
+                Placa = veiculo.Placa,
+                Marca = veiculo.Marca,
+                Modelo = veiculo.Modelo,
+                StatusAtual = veiculo.StatusAtual,
+                ObservacaoStatus = veiculo.ObservacaoStatus
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AtualizarStatus(VeiculoAtualizarStatusViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var veiculo = _context.veiculo.FirstOrDefault(v => v.Id == model.Id);
+
+            if (veiculo == null)
+                return NotFound();
+
+            veiculo.StatusAtual = model.StatusAtual;
+            veiculo.ObservacaoStatus = model.ObservacaoStatus;
+            veiculo.DataAtualizacaoStatus = DateTime.Now;
+
+            _context.SaveChanges();
+
+            TempData["Sucesso"] = "Status do veículo atualizado com sucesso.";
+
+            return RedirectToAction("Index");
+        }
     }
 }

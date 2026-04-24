@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace MecHub.Models
 {
+    [Table("item_ordem_servico")]
     public class ItemOrdemServico
     {
         [Column("id")]

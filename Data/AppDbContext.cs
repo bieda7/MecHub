@@ -14,7 +14,6 @@ namespace MecHub.Data
     public DbSet<Mecanico> mecanico {get; set; } = null!;
     public DbSet<Veiculo> veiculo {get; set; } = null!;
     public DbSet<Servico> servico {get; set; } = null!;
-    public DbSet<StatusOrdem> status_ordem {get; set; } = null!;
     public DbSet<OrdemServico> ordem_servico {get; set; } = null!;
     public DbSet<ItemOrdemServico> item_ordem_servico {get; set; } = null!;
 
@@ -71,12 +70,6 @@ namespace MecHub.Data
                 .HasOne(o => o.Veiculo)
                 .WithMany(v => v.OrdensServico)
                 .HasForeignKey(o => o.VeiculoId);
-
-            // OrdemServico -> Status
-            modelBuilder.Entity<OrdemServico>()
-                .HasOne(o => o.Status)
-                .WithMany(s => s.OrdensServico)
-                .HasForeignKey(o => o.StatusId);
 
             // ItemOrdemServico -> OrdemServico
             modelBuilder.Entity<ItemOrdemServico>()

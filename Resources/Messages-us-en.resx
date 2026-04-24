@@ -1,2 +1,10 @@
-ErroLogin = Invalid username or password.
-CampoObrigatorio = This field is required.
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="ErroLogin" xml:space="preserve">
+    <value>Invalid username or password.</value>
+  </data>
+
+  <data name="CampoObrigatorio" xml:space="preserve">
+    <value>This field is required.</value>
+  </data>
+</root>

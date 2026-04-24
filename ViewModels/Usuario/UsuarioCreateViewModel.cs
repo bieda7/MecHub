@@ -32,6 +32,11 @@ namespace MecHub.ViewModel
         [DataType(DataType.Password)]
         [Compare("Senha", ErrorMessage = "As senhas não coincidem")]
         public required string ConfirmarSenha { get; set; }
+
+        [Required(ErrorMessage = "Informe o telefone")]
+        [Phone(ErrorMessage = "Informe um telefone válido")]
+        [Display(Name = "Telefone")]
+        public string Telefone { get; set; }
     }
 }
 

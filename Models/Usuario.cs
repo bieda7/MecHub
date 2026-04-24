@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MecHub.Models
 {
+    [Table("usuario")]
     public class Usuario
     {
         public int Id { get; set; }
@@ -30,7 +31,7 @@ namespace MecHub.Models
     }
     public enum TipoLoginEnum
         {
-            Local,
-            Google
+            Local = 1,
+            Google = 2
         }
 }

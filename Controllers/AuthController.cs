@@ -58,14 +58,16 @@ public class AuthController : Controller
             ModelState.AddModelError("", "Usuário ou senha inválidos");
             return View(model);
         }
+        usuario.TipoLogin = TipoLoginEnum.Local;
+        _context.SaveChanges();
 
         // 🧠 Criar Claims
         var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.Name, usuario.Nome),
-        new Claim(ClaimTypes.Email, usuario.Email),
-        new Claim("UserId", usuario.Id.ToString())
-    };
+        {
+            new Claim(ClaimTypes.Name, usuario.Nome),
+            new Claim(ClaimTypes.Email, usuario.Email),
+            new Claim("UserId", usuario.Id.ToString())
+        };
 
         var identity = new ClaimsIdentity(
             claims,
@@ -131,9 +133,21 @@ public class AuthController : Controller
             };
 
             _context.Add(usuario);
+            usuario.TipoLogin = TipoLoginEnum.Google;
             _context.SaveChanges();
         }
 
         return RedirectToAction("Index", "Home");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme
+        );
+
+        return RedirectToAction("LoginLocal", "Auth");
     }
 }

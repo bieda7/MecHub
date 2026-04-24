@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MecHub.Models
 {
+    [Table("veiculo")]
     public class Veiculo
     {
         [Column("id")]
@@ -28,8 +29,25 @@ namespace MecHub.Models
         [Column("cliente_id")]
         public int ClienteId { get; set; }
 
+        [Column("status_atual")]
+        public StatusVeiculoEnum StatusAtual {get; set; }
+
+        [Column("obersavacao_status")]
+        public string? ObservacaoStatus {get; set; }
+
+        [Column("data_atualizacao_status")]
+        public DateTime DataAtualizacaoStatus { get; set; } = DateTime.Now;
+
         // Relacionamentos
         public Cliente? Cliente { get; set; }
         public List<OrdemServico> OrdensServico { get; set; } = new();
+    }
+
+        public enum StatusVeiculoEnum
+    {
+        PreAvaliacao = 1,
+        AguardandoAprovacaoOS = 2,
+        EmReparo = 3,
+        ProntoParaRetirada = 4
     }
 }

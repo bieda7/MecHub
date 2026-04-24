@@ -54,7 +54,8 @@ namespace MecHub.Controllers
             {
                 Nome = model.Nome,
                 Telefone = model.Telefone,
-                Cpf = model.Cpf
+                Cpf = model.Cpf,
+                Email = model.Email
             };
 
             try
@@ -85,7 +86,8 @@ namespace MecHub.Controllers
             {
                 Nome = cliente.Nome,
                 Telefone = cliente.Telefone,
-                Cpf = cliente.Cpf
+                Cpf = cliente.Cpf,
+                Email = cliente.Email
 
             };
             return View(model);

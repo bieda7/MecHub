@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MecHub.Models
 {
+    [Table("servico")]
     public class Servico
     {
 

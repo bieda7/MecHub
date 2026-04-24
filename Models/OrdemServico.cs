@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MecHub.Models
 {
+    [Table("ordem_servico")]
     public class OrdemServico
     {
         [Column("id")]
@@ -14,10 +15,10 @@ namespace MecHub.Models
         public int ClienteId { get; set; }
 
         [Column("veiculo_id")]
-        public int VeiculoId { get; set; }
+        public int VeiculoId { get; set; }  
 
-        [Column("status_id")]
-        public int StatusId { get; set; }
+        [Column("status_ordem")]
+        public StatusOrdemEnum StatusOrdem{ get; set; }
 
         // [Column("status_descricao")]
         // public required string statusDescricao {get; set; }
@@ -32,8 +33,15 @@ namespace MecHub.Models
         public Mecanico? Mecanico { get; set; }
         public Cliente? Cliente { get; set; }
         public Veiculo? Veiculo { get; set; }
-        public StatusOrdem? Status { get; set; }
 
         public List<ItemOrdemServico> Itens { get; set; } = new();
+    }
+
+    public enum StatusOrdemEnum
+    {
+        Aberto = 1,
+        Em_andamento = 2,
+        AguardandoAprovacao = 3,
+        Fechada = 4
     }
 }
