@@ -7,7 +7,10 @@ C:\Users\Guilherne\MecHub\bin\Debug\net10.0\MecHub.deps.json
 C:\Users\Guilherne\MecHub\bin\Debug\net10.0\MecHub.runtimeconfig.json
 C:\Users\Guilherne\MecHub\bin\Debug\net10.0\MecHub.dll
 C:\Users\Guilherne\MecHub\bin\Debug\net10.0\MecHub.pdb
+C:\Users\Guilherne\MecHub\bin\Debug\net10.0\AutoMapper.dll
+C:\Users\Guilherne\MecHub\bin\Debug\net10.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\Guilherne\MecHub\bin\Debug\net10.0\Humanizer.dll
+C:\Users\Guilherne\MecHub\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.Google.dll
 C:\Users\Guilherne\MecHub\bin\Debug\net10.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\Guilherne\MecHub\bin\Debug\net10.0\Microsoft.CodeAnalysis.dll
 C:\Users\Guilherne\MecHub\bin\Debug\net10.0\Microsoft.CodeAnalysis.CSharp.dll
@@ -81,6 +84,10 @@ C:\Users\Guilherne\MecHub\bin\Debug\net10.0\zh-Hans\Microsoft.CodeAnalysis.Works
 C:\Users\Guilherne\MecHub\bin\Debug\net10.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.csproj.AssemblyReference.cache
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.Resources.Messages-pt-br.resources
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.Resources.Messages-us-en.resources
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.Resources.SharedResource.resources
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.csproj.GenerateResource.cache
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.AssemblyInfoInputs.cache
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.AssemblyInfo.cs
@@ -95,6 +102,8 @@ C:\Users\Guilherne\MecHub\obj\Debug\net10.0\rjsmcshtml.dswa.cache.json
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\scopedcss\bundle\MecHub.styles.css
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\scopedcss\projectbundle\MecHub.bundle.scp.css
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\j6hy06laez-{0}-frtqjszfoq-frtqjszfoq.gz
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\zujvsf4bor-{0}-962z1n0nfw-962z1n0nfw.gz
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\bd2i4hhsj9-{0}-b9sayid5wm-b9sayid5wm.gz
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\fvp4tnj2uy-{0}-61n19gt1b8-61n19gt1b8.gz
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\9h72ot3ac9-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
@@ -170,10 +179,3 @@ C:\Users\Guilherne\MecHub\obj\Debug\net10.0\refint\MecHub.dll
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.pdb
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.genruntimeconfig.cache
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\ref\MecHub.dll
-C:\Users\Guilherne\MecHub\bin\Debug\net10.0\AutoMapper.dll
-C:\Users\Guilherne\MecHub\bin\Debug\net10.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
-C:\Users\Guilherne\MecHub\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.Google.dll
-C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.csproj.GenerateResource.cache
-C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.Resources.SharedResource.resources
-C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.Resources.Messages-pt-br.resources
-C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.Resources.Messages-us-en.resources

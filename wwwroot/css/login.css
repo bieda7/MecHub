@@ -1,0 +1,238 @@
+:root {
+    --red: #ff022e;
+    --red-dark: #d90027;
+    --white: #ffffff;
+    --input-bg: rgba(190, 199, 220, 0.65);
+    --card-bg: rgba(34, 38, 46, 0.78);
+    --text-muted: #d1d5db;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background: #000;
+}
+
+.login-page {
+    min-height: 100vh;
+    background:
+        linear-gradient(rgba(0, 0, 0, .55), rgba(0, 0, 0, .65)),
+        url('/img/Imagem-Login.png');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 390px;
+    min-height: 420px;
+
+    background: var(--card-bg);
+    border-radius: 14px;
+
+    padding: 42px 46px 36px;
+
+    position: relative;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
+}
+
+.brand-background {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    font-size: 4.8rem;
+    font-weight: 900;
+    font-style: italic;
+
+    color: rgba(255, 255, 255, 0.08);
+    letter-spacing: -4px;
+
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+}
+
+.login-card h1 {
+    position: relative;
+    z-index: 1;
+
+    color: var(--white);
+    font-size: 2rem;
+    font-weight: 900;
+
+    margin-bottom: 26px;
+}
+
+.login-form {
+    width: 100%;
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.input-group-login {
+    width: 100%;
+    margin-bottom: 14px;
+}
+
+.input-group-login input {
+    width: 100%;
+    height: 34px;
+
+    border: none;
+    outline: none;
+    border-radius: 20px;
+
+    padding: 0 18px;
+
+    background: var(--input-bg);
+    color: var(--white);
+
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+.input-group-login input::placeholder {
+    color: var(--white);
+}
+
+.password-group {
+    position: relative;
+    margin-bottom: 4px;
+}
+
+.password-group input {
+    padding-right: 45px;
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+
+    border: none;
+    background: transparent;
+
+    color: #111;
+    font-size: 1rem;
+
+    cursor: pointer;
+}
+
+.forgot-password {
+    width: 100%;
+
+    color: var(--white);
+    font-size: 0.8rem;
+    font-style: italic;
+    text-decoration: none;
+
+    margin-bottom: 18px;
+}
+
+.forgot-password:hover {
+    color: var(--red);
+}
+
+.btn-login {
+    width: 108px;
+    height: 35px;
+
+    border: none;
+    border-radius: 20px;
+
+    background: var(--red);
+    color: var(--white);
+
+    font-weight: 900;
+    font-size: 0.95rem;
+
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.btn-login:hover {
+    background: var(--red-dark);
+    transform: translateY(-1px);
+}
+
+.login-divider {
+    color: var(--white);
+    font-size: 0.9rem;
+    font-weight: 800;
+
+    margin: 14px 0 10px;
+}
+
+.btn-google {
+    min-width: 92px;
+    height: 24px;
+
+    border-radius: 20px;
+    background: var(--white);
+
+    color: #777;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-decoration: none;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.google-icon {
+    color: #4285f4;
+    font-weight: 900;
+    font-size: 1rem;
+}
+
+.btn-google:hover {
+    color: #444;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 576px) {
+    .login-card {
+        max-width: 340px;
+        padding: 38px 30px 32px;
+    }
+
+    .brand-background {
+        font-size: 4rem;
+    }
+
+    .login-card h1 {
+        font-size: 1.8rem;
+    }
+}

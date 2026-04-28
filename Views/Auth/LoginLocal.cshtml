@@ -1,0 +1,74 @@
+@model MecHub.ViewModel.LoginViewModel
+
+
+@{
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+    ViewData["Title"] = "Login";
+}
+
+<main class="login-page">
+    <section class="login-card">
+
+        <div class="brand-background">
+            MECHUB
+        </div>
+
+        <h1>Login</h1>
+
+        <form asp-controller="Auth" asp-action="LoginLocal" method="post" class="login-form">
+
+            <div class="input-group-login">
+                <input asp-for="Email" placeholder="Nome completo ou e-mail" autocomplete="username" />
+
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="input-group-login password-group">
+                <input asp-for="Senha" id="senha" placeholder="Senha" autocomplete="current-password" />
+
+                <button type="button" class="toggle-password" onclick="toggleSenha()">
+                    👁
+                </button>
+
+                <span asp-validation-for="Senha" class="text-danger"></span>
+            </div>
+
+            <div class="remember-box">
+                <label class="remember-label" for="LembrarMe">
+                    <input asp-for="LembrarMe" />
+                    <p>Lembrar minha senha</p>
+                    <span>Lembrar minha senha</span>
+                </label>
+            </div>
+
+            <a href="#" class="forgot-password">Esqueceu a senha?</a>
+
+            <button type="submit" class="btn-login">
+                Entrar
+            </button>
+
+            <p class="login-divider">Ou entrar com</p>
+
+            <a asp-controller="Auth" asp-action="LoginGoogle" class="btn-google">
+                <span>Google</span>
+                <span class="google-icon">G</span>
+            </a>
+
+        </form>
+    </section>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        function toggleSenha() {
+            const senha = document.getElementById("senha");
+
+            senha.type =
+                senha.type === "password"
+                    ? "text"
+                    : "password";
+        }
+    </script>
+}

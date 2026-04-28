@@ -35,8 +35,8 @@ namespace MecHub.Data
                 .IsUnique();
 
             modelBuilder.Entity<Usuario>()
-            .Property(u => u.TipoLogin)
-            .HasConversion<string>();
+                .Property(u => u.TipoLogin)
+                .HasConversion<int>();
 
             // 🔗 RELACIONAMENTOS
 

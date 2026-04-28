@@ -98,7 +98,7 @@ public class AuthController : Controller
         return Challenge(properties, GoogleDefaults.AuthenticationScheme);
     }
 
-    [HttpPost]
+    [HttpGet]
     public async Task<IActionResult> GoogleResponse()
     {
         var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -137,7 +137,7 @@ public class AuthController : Controller
             _context.SaveChanges();
         }
 
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Index", "Mecanico");
     }
 
     [HttpPost]
