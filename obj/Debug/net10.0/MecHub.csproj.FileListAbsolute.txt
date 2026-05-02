@@ -103,7 +103,6 @@ C:\Users\Guilherne\MecHub\obj\Debug\net10.0\scopedcss\Views\Shared\_Layout.cshtm
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\scopedcss\bundle\MecHub.styles.css
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\scopedcss\projectbundle\MecHub.bundle.scp.css
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\j6hy06laez-{0}-frtqjszfoq-frtqjszfoq.gz
-C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\zujvsf4bor-{0}-962z1n0nfw-962z1n0nfw.gz
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\bd2i4hhsj9-{0}-b9sayid5wm-b9sayid5wm.gz
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\fvp4tnj2uy-{0}-61n19gt1b8-61n19gt1b8.gz
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\9h72ot3ac9-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
@@ -179,3 +178,5 @@ C:\Users\Guilherne\MecHub\obj\Debug\net10.0\refint\MecHub.dll
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.pdb
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.genruntimeconfig.cache
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\ref\MecHub.dll
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\zujvsf4bor-{0}-k15hlwkzml-k15hlwkzml.gz
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\fid0zjzh9q-{0}-87yl5sfl6p-87yl5sfl6p.gz

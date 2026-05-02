@@ -1,292 +1,45 @@
-@using System.Security.Claims
-
-@{
-    var nomeUsuario = User.Identity?.Name ?? "Mecânico";
-    var userEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? "";
-}
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>@ViewData["Title"] - MecHub</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-
-    <style>
-        :root {
-            --mechub-red: #FF022E;
-            --mechub-red-hover: #d90027;
-            --mechub-dark: #1f1f1f;
-            --mechub-darker: #141414;
-            --mechub-light: #f5f6fa;
-            --mechub-border: #343434;
-        }
-
-        body {
-            background-color: var(--mechub-light);
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        .layout-wrapper {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 270px;
-            background: var(--mechub-dark);
-            color: white;
-            position: fixed;
-            height: 100vh;
-            left: 0;
-            top: 0;
-            padding: 24px 18px;
-        }
-
-        .sidebar-logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: white;
-            margin-bottom: 30px;
-        }
-
-        .sidebar-logo span {
-            color: var(--mechub-red);
-        }
-
-        .sidebar-user {
-            background: var(--mechub-darker);
-            border: 1px solid var(--mechub-border);
-            border-radius: 14px;
-            padding: 14px;
-            margin-bottom: 25px;
-        }
-
-        .sidebar-user small {
-            color: #bbb;
-        }
-
-        .menu-title {
-            font-size: 0.75rem;
-            color: #aaa;
-            text-transform: uppercase;
-            margin: 18px 0 8px;
-        }
-
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #ddd;
-            text-decoration: none;
-            padding: 12px 14px;
-            border-radius: 10px;
-            margin-bottom: 6px;
-            transition: 0.2s;
-        }
-
-        .sidebar-link:hover {
-            background: var(--mechub-red);
-            color: white;
-        }
-
-        .sidebar-link.active {
-            background: var(--mechub-red);
-            color: white;
-        }
-
-        .content-area {
-            margin-left: 270px;
-            width: calc(100% - 270px);
-            min-height: 100vh;
-        }
-
-        .topbar {
-            height: 72px;
-            background: white;
-            border-bottom: 1px solid #e5e5e5;
-            padding: 0 28px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .topbar-title {
-            font-weight: bold;
-            color: var(--mechub-dark);
-            margin: 0;
-        }
-
-        .main-content {
-            padding: 28px;
-        }
-
-        .btn-mechub {
-            background: var(--mechub-red);
-            color: white;
-            border: none;
-        }
-
-        .btn-mechub:hover {
-            background: var(--mechub-red-hover);
-            color: white;
-        }
-
-        .logout-btn {
-            width: 100%;
-            border: 1px solid var(--mechub-red);
-            color: white;
-            background: transparent;
-            padding: 10px;
-            border-radius: 10px;
-            transition: 0.2s;
-        }
-
-        .logout-btn:hover {
-            background: var(--mechub-red);
-        }
-
-        .sidebar-footer {
-            position: absolute;
-            bottom: 20px;
-            left: 18px;
-            right: 18px;
-        }
-
-        @@media (max-width: 768px) {
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-            }
-
-            .layout-wrapper {
-                flex-direction: column;
-            }
-
-            .content-area {
-                margin-left: 0;
-                width: 100%;
-            }
-
-            .sidebar-footer {
-                position: static;
-                margin-top: 25px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/mecanico.css" asp-append-version="true" />
 </head>
 
 <body>
-    <div class="layout-wrapper">
+    <div class="dashboard-layout">
 
+        <!-- SIDEBAR -->
         <aside class="sidebar">
-            <div class="sidebar-logo">
-                Mec<span>Hub</span>
+            <div class="sidebar-brand">
+                <span>Mec</span>Hub
             </div>
 
-            <div class="sidebar-user">
-                <strong>@nomeUsuario</strong><br />
-                <small>@userEmail</small>
-                <br />
-                <span class="badge bg-danger mt-2">Mecânico</span>
-            </div>
+            <nav class="sidebar-nav">
+                <a asp-controller="Mecanico" asp-action="Index" class="nav-item active">🏠 Dashboard</a>
+                <a asp-controller="OrdemServico" asp-action="Index" class="nav-item">📋 Ordens de Serviço</a>
+                <a asp-controller="Servico" asp-action="Index" class="nav-item">🛠️ Serviços</a>
+                <a asp-controller="Servico" asp-action="Criar" class="nav-item">➕ Novo Serviço</a>
+                <a asp-controller="Veiculo" asp-action="Index" class="nav-item">🚗 Veículos</a>
+                <a asp-controller="Cliente" asp-action="Index" class="nav-item">👥 Clientes</a>
+            </nav>
 
-            <div class="menu-title">Principal</div>
-
-            <a asp-controller="Mecanico" asp-action="Dashboard" class="sidebar-link">
-                🏠 Dashboard
-            </a>
-
-            <a asp-controller="Veiculo" asp-action="Index" class="sidebar-link">
-                🚗 Veículos
-            </a>
-
-            <a asp-controller="Cliente" asp-action="Index" class="sidebar-link">
-                👤 Clientes
-            </a>
-
-            <a asp-controller="OrdemServico" asp-action="Index" class="sidebar-link">
-                📋 Ordens de Serviço
-            </a>
-
-            <a asp-controller="Servico" asp-action="Index" class="sidebar-link">
-                🛠️ Serviços
-            </a>
-
-            <div class="menu-title">Operações</div>
-
-            <a asp-controller="Veiculo" asp-action="Criar" class="sidebar-link">
-                ➕ Cadastrar Veículo
-            </a>
-
-            <a asp-controller="ConsultaVeiculo" asp-action="Index" class="sidebar-link">
-                🔎 Consulta Veicular
-            </a>
-
-            <a asp-controller="Relatorio" asp-action="Index" class="sidebar-link">
-                📄 Relatórios
-            </a>
-
-            <div class="menu-title">Sistema</div>
-
-            <a asp-controller="Home" asp-action="Index" class="sidebar-link">
-                🌐 Home
-            </a>
-
-            <div class="sidebar-footer">
-                <form asp-controller="Auth" asp-action="Logout" method="post">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="logout-btn">
-                        🚪 Sair
-                    </button>
-                </form>
-            </div>
+            <form asp-controller="Auth" asp-action="Logout" method="post" class="logout-form">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="logout-btn">🚪 Sair</button>
+            </form>
         </aside>
 
-        <main class="content-area">
-            <header class="topbar">
-                <div>
-                    <h4 class="topbar-title">@ViewData["Title"]</h4>
-                    <small class="text-muted">Painel operacional do mecânico</small>
-                </div>
-
-                <div>
-                    <span class="me-3 text-muted">@DateTime.Now.ToString("dd/MM/yyyy")</span>
-                    <a asp-controller="Veiculo" asp-action="Criar" class="btn btn-mechub">
-                        Novo Veículo
-                    </a>
-                </div>
-            </header>
-
-            <section class="main-content">
-                @if (TempData["Sucesso"] != null)
-                {
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        @TempData["Sucesso"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                }
-
-                @if (TempData["Erro"] != null)
-                {
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        @TempData["Erro"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                }
-
-                @RenderBody()
-            </section>
+        <!-- CONTEÚDO -->
+        <main class="content">
+            @RenderBody()
         </main>
 
     </div>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
-    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

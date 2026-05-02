@@ -1,0 +1,114 @@
+:root {
+    --red: #FF022E;
+    --dark: #1d2024;
+    --black: #000;
+    --bg: #0b0b0d;
+    --border: #333;
+    --white: #fff;
+    --muted: #9ca3af;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--white);
+    font-family: Arial;
+}
+
+.dashboard-layout {
+    display: flex;
+}
+
+.sidebar {
+    width: 250px;
+    background: var(--black);
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+}
+
+.sidebar-brand {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.sidebar-brand span {
+    color: var(--red);
+}
+
+.nav-item {
+    display: block;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+}
+
+.nav-item:hover {
+    background: var(--red);
+}
+
+.content {
+    margin-left: 250px;
+    padding: 30px;
+    width: 100%;
+}
+
+.metric-card {
+    background: var(--dark);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.panel {
+    background: var(--dark);
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 10px;
+}
+
+.quick-grid {
+    display: grid;
+    grid-template-columns: 2fr 2fr;
+    gap: 10px;
+}
+
+.quick-action {
+    background: #252a31;
+    padding: 10px;
+    text-decoration: none;
+    color: white;
+    border-radius: 8px;
+}
+
+.quick-action.primary {
+    background: var(--red);
+}
+
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+}
+
+.dashboard-table {
+    width: 100%;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+}

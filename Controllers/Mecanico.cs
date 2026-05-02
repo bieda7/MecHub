@@ -3,6 +3,7 @@ using MecHub.Data;
 using MecHub.Models;
 using System.Windows.Markup;
 using MecHub.ViewModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace MecHub.Controllers
 {
@@ -16,10 +17,26 @@ namespace MecHub.Controllers
         }
         // Listar mecanicos
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var mecanicos = _context.mecanico.ToList();
-            return View(mecanicos);
+            ViewBag.TotalClientes = _context.cliente.Count();
+            ViewBag.TotalVeiculos = _context.veiculo.Count();
+            ViewBag.TotalServicos = _context.servico.Count();
+            ViewBag.TotalOrdens = _context.ordem_servico.Count();
+
+            ViewBag.OrdensAbertas = _context.ordem_servico.Count(o => o.StatusOrdem == StatusOrdemEnum.Aberto);
+            ViewBag.OrdensAndamento = _context.ordem_servico.Count(o => o.StatusOrdem == StatusOrdemEnum.Em_andamento);
+            ViewBag.OrdensAguardando = _context.ordem_servico.Count(o => o.StatusOrdem == StatusOrdemEnum.AguardandoAprovacao);
+            ViewBag.OrdensFechadas = _context.ordem_servico.Count(o => o.StatusOrdem == StatusOrdemEnum.Fechada);
+
+            ViewBag.UltimasOrdens = _context.ordem_servico
+                .Include(o => o.Cliente)
+                .Include(o => o.Veiculo)
+                .OrderByDescending(o => o.DataCriacao)
+                .Take(5)
+                .ToList();
+
+            return View();
         }
 
         //listar/Read Mecanicos por ID
@@ -44,7 +61,7 @@ namespace MecHub.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Criar(MecanicoCreateViewModel model)
         {
-            
+
             var mecanico = new Mecanico
             {
                 UsuarioId = 7,

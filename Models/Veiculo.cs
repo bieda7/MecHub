@@ -29,10 +29,10 @@ namespace MecHub.Models
         [Column("cliente_id")]
         public int ClienteId { get; set; }
 
-        [Column("status_atual")]
+        [Column("status_veiculo")]
         public StatusVeiculoEnum StatusAtual {get; set; }
 
-        [Column("obersavacao_status")]
+        [Column("observacao_status")]
         public string? ObservacaoStatus {get; set; }
 
         [Column("data_atualizacao_status")]
