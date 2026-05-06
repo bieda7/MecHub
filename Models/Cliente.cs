@@ -18,7 +18,7 @@ namespace MecHub.Models
         public required string Cpf { get; set; }
 
         [Column("email")]
-        public required string Email {get; set; }
+        public required string Email {get; set; } = string.Empty;
         public List<Veiculo> Veiculos { get; set; } = new();
     }
 }

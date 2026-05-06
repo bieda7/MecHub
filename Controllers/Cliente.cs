@@ -63,7 +63,7 @@ namespace MecHub.Controllers
                 _context.cliente.Add(cliente);
                 _context.SaveChanges();
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Mecanico");
             }
             catch (Exception)
             {
@@ -116,7 +116,7 @@ namespace MecHub.Controllers
             try
             {
                 _context.SaveChanges();    
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Mecanico");
             }
             catch (Exception)
             {
@@ -152,7 +152,7 @@ namespace MecHub.Controllers
                 _context.cliente.Remove(cliente);
                 _context.SaveChanges();
 
-                return RedirectToAction("Index");   
+                return RedirectToAction("Index", "Mecanico");   
             }
             catch (Exception)
             {

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MecHub.Data;
 using MecHub.Models;
 using MecHub.ViewModel;
@@ -14,73 +15,156 @@ namespace MecHub.Controllers
             _context = context;
         }
 
-        // Listar status ordens
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            var veiculos = _context.veiculo.ToList();
-            return Json(veiculos); // Apenas para teste
+            var veiculos = await _context.veiculo
+                .Include(v => v.Cliente)
+                .OrderBy(v => v.Placa)
+                .Select(v => new VeiculoListViewModel
+                {
+                    Id = v.Id,
+                    Placa = v.Placa,
+                    Marca = v.Marca,
+                    Modelo = v.Modelo,
+                    Cor = v.Cor,
+                    AnoFabricacao = v.AnoFabricacao,
+                    DataCriacao = v.DataCriacao,
+                    StatusAtual = v.StatusAtual,
+                    ClienteNome = v.Cliente != null ? v.Cliente.Nome : "Sem cliente"
+                })
+                .ToListAsync();
+
+            return View(veiculos);
         }
 
+        [HttpGet]
         public IActionResult Criar()
         {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Criar(VeiculoCreateViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var placaExiste = await _context.veiculo
+                .AnyAsync(v => v.Placa == model.Placa);
+
+            if (placaExiste)
+            {
+                ModelState.AddModelError("Placa", "Já existe um veículo cadastrado com esta placa.");
+                return View(model);
+            }
+
+            var clienteExiste = await _context.cliente
+                .AnyAsync(c => c.Id == model.ClienteId);
+
+            if (!clienteExiste)
+            {
+                ModelState.AddModelError("ClienteId", "Cliente informado não existe.");
+                return View(model);
+            }
+
             var veiculo = new Veiculo
             {
-                Marca = "Toyota",
-                Modelo = "Etios",
-                Placa = "ABC1234",
-                Cor = "Branco",
-                AnoFabricacao = 2015,
-                DataCriacao = DateTime.Now,
-                ClienteId = 3
+                Placa = model.Placa,
+                Modelo = model.Modelo,
+                Marca = model.Marca,
+                ClienteId = model.ClienteId,
+                Cor = model.Cor,
+                AnoFabricacao = model.AnoFabricacao
             };
 
             _context.veiculo.Add(veiculo);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return Content("Veiculo Criado");
+            return RedirectToAction(nameof(Index));
         }
 
-        // Deletar veiculo
-        public IActionResult Deletar(int id)
+        [HttpGet]
+        public async Task<IActionResult> Detalhes(int id)
         {
-            var veiculo = _context.veiculo.Find(id);
+            var veiculo = await _context.veiculo
+                .Include(v => v.Cliente)
+                .FirstOrDefaultAsync(v => v.Id == id);
 
             if (veiculo == null)
-                return Content("Veiculo não encontrado");
+                return NotFound();
+
+            return View(veiculo);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Editar(int id)
+        {
+            var veiculo = await _context.veiculo.FindAsync(id);
+
+            if (veiculo == null)
+                return NotFound();
+
+            return View(veiculo);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Editar(Veiculo model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var veiculo = await _context.veiculo.FindAsync(model.Id);
+
+            if (veiculo == null)
+                return NotFound();
+
+            veiculo.Placa = model.Placa;
+            veiculo.Marca = model.Marca;
+            veiculo.Modelo = model.Modelo;
+            veiculo.Cor = model.Cor;
+            veiculo.AnoFabricacao = model.AnoFabricacao;
+            veiculo.ClienteId = model.ClienteId;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Excluir(int id)
+        {
+            var veiculo = await _context.veiculo
+                .Include(v => v.Cliente)
+                .FirstOrDefaultAsync(v => v.Id == id);
+
+            if (veiculo == null)
+                return NotFound();
+
+            return View(veiculo);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ExcluirConfirmado(int id)
+        {
+            var veiculo = await _context.veiculo.FindAsync(id);
+
+            if (veiculo == null)
+                return NotFound();
 
             _context.veiculo.Remove(veiculo);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return Content("Veiculo deletado");
+            return RedirectToAction(nameof(Index));
         }
 
-        // Editar veiculo
-        public IActionResult Editar(int id)
-        {
-            var veiculo = _context.veiculo.Find(id);
-
-            if (veiculo == null)
-                return Content("Veiculo não encontrado");
-
-            veiculo.Cor = "Roxo";
-            _context.SaveChanges();
-
-            return Content("Veiculo Atualizado");
-        }
-
-        // Buscar veiculo pelo ID
-        public IActionResult Detalhes(int id)
-        {
-            var veiculo = _context.veiculo.Find(id);
-
-            if (veiculo == null)
-                return Content("Veiculo não encontrado");
-            return Json(veiculo);
-        }
         [HttpGet]
-        public IActionResult AtualizarStatus(int id)
+        public async Task<IActionResult> AtualizarStatus(int id)
         {
-            var veiculo = _context.veiculo.FirstOrDefault(v => v.Id == id);
+            var veiculo = await _context.veiculo.FirstOrDefaultAsync(v => v.Id == id);
 
             if (veiculo == null)
                 return NotFound();
@@ -100,12 +184,12 @@ namespace MecHub.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AtualizarStatus(VeiculoAtualizarStatusViewModel model)
+        public async Task<IActionResult> AtualizarStatus(VeiculoAtualizarStatusViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            var veiculo = _context.veiculo.FirstOrDefault(v => v.Id == model.Id);
+            var veiculo = await _context.veiculo.FirstOrDefaultAsync(v => v.Id == model.Id);
 
             if (veiculo == null)
                 return NotFound();
@@ -114,11 +198,11 @@ namespace MecHub.Controllers
             veiculo.ObservacaoStatus = model.ObservacaoStatus;
             veiculo.DataAtualizacaoStatus = DateTime.Now;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             TempData["Sucesso"] = "Status do veículo atualizado com sucesso.";
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -16,7 +16,7 @@ namespace MecHub.ViewModel
 
         [Required(ErrorMessageResourceName = "CampoObrigatorio",
             ErrorMessageResourceType = typeof(SharedResource))]
-        public decimal Tipo { get; set; }
+        public required string Tipo { get; set; }
 
 
     }

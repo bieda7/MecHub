@@ -62,8 +62,28 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVjYW5pY29cSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Guilherne/MecHub/Views/Mecanico/ListaClientes.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVjYW5pY29cTGlzdGFDbGllbnRlcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Guilherne/MecHub/Views/Mecanico/ListaVeiculos.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVjYW5pY29cTGlzdGFWZWljdWxvcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Guilherne/MecHub/Views/OrdemServico/Criar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZW1TZXJ2aWNvXENyaWFyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Guilherne/MecHub/Views/OrdemServico/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZW1TZXJ2aWNvXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Guilherne/MecHub/Views/Servico/CadastroServico.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2Vydmljb1xDYWRhc3Ryb1NlcnZpY28uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Guilherne/MecHub/Views/Servico/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2Vydmljb1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Guilherne/MecHub/Views/Shared/Error.cshtml]
@@ -90,12 +110,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Guilherne/MecHub/Views/Veiculo/AtualizarStatus.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVpY3Vsb1xBdHVhbGl6YXJTdGF0dXMuY3NodG1s
+[C:/Users/Guilherne/MecHub/Views/Veiculos/AtualizarStatus.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVpY3Vsb3NcQXR1YWxpemFyU3RhdHVzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Guilherne/MecHub/Views/Veiculo/CadastroVeiculo.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVpY3Vsb1xDYWRhc3Ryb1ZlaWN1bG8uY3NodG1s
+[C:/Users/Guilherne/MecHub/Views/Veiculos/CadastroVeiculo.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVpY3Vsb3NcQ2FkYXN0cm9WZWljdWxvLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Guilherne/MecHub/Views/Veiculos/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVmVpY3Vsb3NcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Guilherne/MecHub/Views/_ViewImports.cshtml]

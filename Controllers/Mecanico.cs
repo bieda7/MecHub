@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MecHub.Data;
 using MecHub.Models;
-using System.Windows.Markup;
 using MecHub.ViewModel;
-using Microsoft.EntityFrameworkCore;
 
 namespace MecHub.Controllers
 {
@@ -15,90 +14,151 @@ namespace MecHub.Controllers
         {
             _context = context;
         }
-        // Listar mecanicos
+
+        // Dashboard do mecânico
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            ViewBag.TotalClientes = _context.cliente.Count();
-            ViewBag.TotalVeiculos = _context.veiculo.Count();
-            ViewBag.TotalServicos = _context.servico.Count();
-            ViewBag.TotalOrdens = _context.ordem_servico.Count();
+            ViewBag.TotalClientes = await _context.cliente.CountAsync();
+            ViewBag.TotalVeiculos = await _context.veiculo.CountAsync();
+            ViewBag.TotalServicos = await _context.servico.CountAsync();
+            ViewBag.TotalOrdens = await _context.ordem_servico.CountAsync();
 
-            ViewBag.OrdensAbertas = _context.ordem_servico.Count(o => o.StatusOrdem == StatusOrdemEnum.Aberto);
-            ViewBag.OrdensAndamento = _context.ordem_servico.Count(o => o.StatusOrdem == StatusOrdemEnum.Em_andamento);
-            ViewBag.OrdensAguardando = _context.ordem_servico.Count(o => o.StatusOrdem == StatusOrdemEnum.AguardandoAprovacao);
-            ViewBag.OrdensFechadas = _context.ordem_servico.Count(o => o.StatusOrdem == StatusOrdemEnum.Fechada);
+            ViewBag.OrdensAbertas = await _context.ordem_servico.CountAsync(o => o.StatusOrdem == StatusOrdemEnum.Aberto);
+            ViewBag.OrdensAndamento = await _context.ordem_servico.CountAsync(o => o.StatusOrdem == StatusOrdemEnum.Em_andamento);
+            ViewBag.OrdensAguardando = await _context.ordem_servico.CountAsync(o => o.StatusOrdem == StatusOrdemEnum.AguardandoAprovacao);
+            ViewBag.OrdensFechadas = await _context.ordem_servico.CountAsync(o => o.StatusOrdem == StatusOrdemEnum.Fechada);
 
-            ViewBag.UltimasOrdens = _context.ordem_servico
+            ViewBag.UltimasOrdens = await _context.ordem_servico
                 .Include(o => o.Cliente)
                 .Include(o => o.Veiculo)
                 .OrderByDescending(o => o.DataCriacao)
                 .Take(5)
-                .ToList();
+                .ToListAsync();
 
             return View();
         }
 
-        //listar/Read Mecanicos por ID
+        // Lista de clientes para o mecânico
         [HttpGet]
-        public IActionResult Detalhe(int id)
+        public async Task<IActionResult> ListaClientes()
         {
-            var mecanicos = _context.mecanico.Find(id);
+            var clientes = await _context.cliente
+                .OrderBy(c => c.Nome)
+                .ToListAsync();
 
-            if (mecanicos == null)
-                return NotFound();
-
-            return View(mecanicos);
+            return View(clientes);
         }
 
-        // Inserir/Create mecanicos
+        // Detalhes do mecânico
+        [HttpGet]
+        public async Task<IActionResult> Detalhe(int id)
+        {
+            var mecanico = await _context.mecanico
+                .Include(m => m.Usuario)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (mecanico == null)
+                return NotFound();
+
+            return View(mecanico);
+        }
+
+        // Tela de criação de mecânico
         [HttpGet]
         public IActionResult Criar()
         {
             return View();
         }
+
+        // Processar criação de mecânico
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Criar(MecanicoCreateViewModel model)
+        public async Task<IActionResult> Criar(MecanicoCreateViewModel model)
         {
+            if (!ModelState.IsValid)
+                return View(model);
 
             var mecanico = new Mecanico
             {
-                UsuarioId = 7,
-                Telefone = "11999999999"
+                UsuarioId = model.UsuarioId,
+                Telefone = model.Telefone
             };
 
             _context.mecanico.Add(mecanico);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return Json(mecanico);
+            return RedirectToAction(nameof(Index));
         }
-        // Deletar mecanicos
-        public IActionResult Deletar(int id)
+
+        // Tela de edição de mecânico
+        [HttpGet]
+        public async Task<IActionResult> Editar(int id)
         {
-            var mecanico = _context.mecanico.Find(id);
+            var mecanico = await _context.mecanico.FindAsync(id);
 
             if (mecanico == null)
-                return Content("Mecanico não encontrado");
+                return NotFound();
+
+            var model = new MecanicoEditViewModel
+            {
+                Id = mecanico.Id,
+                UsuarioId = mecanico.UsuarioId,
+                Telefone = mecanico.Telefone
+            };
+
+            return View(model);
+        }
+
+        // Processar edição de mecânico
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Editar(MecanicoEditViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var mecanico = await _context.mecanico.FindAsync(model.Id);
+
+            if (mecanico == null)
+                return NotFound();
+
+            mecanico.UsuarioId = model.UsuarioId;
+            mecanico.Telefone = model.Telefone;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Tela de confirmação de exclusão
+        [HttpGet]
+        public async Task<IActionResult> Excluir(int id)
+        {
+            var mecanico = await _context.mecanico
+                .Include(m => m.Usuario)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (mecanico == null)
+                return NotFound();
+
+            return View(mecanico);
+        }
+
+        // Confirmar exclusão
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ExcluirConfirmado(int id)
+        {
+            var mecanico = await _context.mecanico.FindAsync(id);
+
+            if (mecanico == null)
+                return NotFound();
 
             _context.mecanico.Remove(mecanico);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return Content("Mecanico deletado!");
+            return RedirectToAction(nameof(Index));
         }
-        // Editar mecanicos
-        public IActionResult Editar(int id)
-        {
-            var mecanico = _context.mecanico.Find(id);
-
-            if (mecanico == null)
-                return Content("Mecanico não encontrado");
-
-            mecanico.Telefone = "11999998989";
-            _context.SaveChanges();
-
-            return Content("Mecanico Atualizado");
-        }
-
     }
 }

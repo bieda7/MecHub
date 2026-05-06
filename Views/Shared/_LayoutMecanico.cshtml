@@ -22,9 +22,9 @@
                 <a asp-controller="Mecanico" asp-action="Index" class="nav-item active">🏠 Dashboard</a>
                 <a asp-controller="OrdemServico" asp-action="Index" class="nav-item">📋 Ordens de Serviço</a>
                 <a asp-controller="Servico" asp-action="Index" class="nav-item">🛠️ Serviços</a>
-                <a asp-controller="Servico" asp-action="Criar" class="nav-item">➕ Novo Serviço</a>
-                <a asp-controller="Veiculo" asp-action="Index" class="nav-item">🚗 Veículos</a>
-                <a asp-controller="Cliente" asp-action="Index" class="nav-item">👥 Clientes</a>
+                @* <a asp-controller="Servico" asp-action="Criar" class="nav-item">➕ Novo Serviço</a> *@
+                <a asp-controller="Veiculos" asp-action="Index" class="nav-item">🚗 Veículos</a>
+                <a asp-controller="Mecanico" asp-action="ListaClientes" class="nav-item">👥 Clientes</a>
             </nav>
 
             <form asp-controller="Auth" asp-action="Logout" method="post" class="logout-form">
@@ -41,5 +41,8 @@
     </div>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

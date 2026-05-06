@@ -10,12 +10,12 @@ namespace MecHub.ViewModel
 
         [Required(ErrorMessageResourceName = "CampoObrigatorio",
             ErrorMessageResourceType = typeof(SharedResource))]
-        public decimal Preco { get; set; }
+        public decimal Valor { get; set; }
 
         
         [Required(ErrorMessageResourceName = "CampoObrigatorio",
             ErrorMessageResourceType = typeof(SharedResource))]
-        public decimal Tipo { get; set; }
+        public required string  Tipo { get; set; }
 
         
     }

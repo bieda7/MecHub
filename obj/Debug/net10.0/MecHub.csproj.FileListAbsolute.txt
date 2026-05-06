@@ -179,4 +179,9 @@ C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.pdb
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\MecHub.genruntimeconfig.cache
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\ref\MecHub.dll
 C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\zujvsf4bor-{0}-k15hlwkzml-k15hlwkzml.gz
-C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\fid0zjzh9q-{0}-87yl5sfl6p-87yl5sfl6p.gz
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\4j4vdzvjg1-{0}-f0kipbj4ul-f0kipbj4ul.gz
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\ekipis60l5-{0}-gt0mucwjsz-gt0mucwjsz.gz
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\a0p58lrwo4-{0}-3pbf31uevh-3pbf31uevh.gz
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\fid0zjzh9q-{0}-cvo7ds21w8-cvo7ds21w8.gz
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\88szln2tzp-{0}-o0692lbmk4-o0692lbmk4.gz
+C:\Users\Guilherne\MecHub\obj\Debug\net10.0\compressed\96hr0idhaf-{0}-x57dk9qbiw-x57dk9qbiw.gz

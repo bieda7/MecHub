@@ -7,15 +7,15 @@ namespace MecHub.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
-        {   
+        {
         }
-    public DbSet<Cliente> cliente { get; set; } = null!;
-    public DbSet<Usuario> usuario {get; set; } = null!;
-    public DbSet<Mecanico> mecanico {get; set; } = null!;
-    public DbSet<Veiculo> veiculo {get; set; } = null!;
-    public DbSet<Servico> servico {get; set; } = null!;
-    public DbSet<OrdemServico> ordem_servico {get; set; } = null!;
-    public DbSet<ItemOrdemServico> item_ordem_servico {get; set; } = null!;
+        public DbSet<Cliente> cliente { get; set; } = null!;
+        public DbSet<Usuario> usuario { get; set; } = null!;
+        public DbSet<Mecanico> mecanico { get; set; } = null!;
+        public DbSet<Veiculo> veiculo { get; set; } = null!;
+        public DbSet<Servico> servico { get; set; } = null!;
+        public DbSet<OrdemServico> ordem_servico { get; set; } = null!;
+        public DbSet<ItemOrdemServico> item_ordem_servico { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,9 +30,9 @@ namespace MecHub.Data
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
-             modelBuilder.Entity<Veiculo>()
-                .HasIndex(v => v.Placa)
-                .IsUnique();
+            modelBuilder.Entity<Veiculo>()
+               .HasIndex(v => v.Placa)
+               .IsUnique();
 
             modelBuilder.Entity<Usuario>()
                 .Property(u => u.TipoLogin)
@@ -82,6 +82,10 @@ namespace MecHub.Data
                 .HasOne(i => i.Servico)
                 .WithMany(s => s.Itens)
                 .HasForeignKey(i => i.ServicoId);
+
+            modelBuilder.Entity<Cliente>()
+                .HasIndex(c => c.Email)
+                .IsUnique();
         }
-    }    
+    }
 }
