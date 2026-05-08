@@ -13,7 +13,7 @@ namespace MecHub.Models
         public int UsuarioId { get; set; }
 
         [Column("telefone")] // nome real no banco
-        public required string Telefone { get; set; }
+        public string? Telefone { get; set; }
 
         // Relacionamentos
         public Usuario? Usuario { get; set; }

@@ -86,6 +86,27 @@ namespace MecHub.Data
             modelBuilder.Entity<Cliente>()
                 .HasIndex(c => c.Email)
                 .IsUnique();
+
+            // Cliente -> Mecanico
+            modelBuilder.Entity<Cliente>()
+                .HasOne(c => c.Mecanico)
+                .WithMany()
+                .HasForeignKey(c => c.MecanicoId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Veiculo -> Mecanico
+            modelBuilder.Entity<Veiculo>()
+                .HasOne(v => v.Mecanico)
+                .WithMany()
+                .HasForeignKey(v => v.MecanicoId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Servico -> Mecanico
+            modelBuilder.Entity<Servico>()
+                .HasOne(s => s.Mecanico)
+                .WithMany()
+                .HasForeignKey(s => s.MecanicoId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

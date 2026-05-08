@@ -3,13 +3,27 @@ using MecHub.Data;
 using MecHub.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MecHub.ViewModel;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace MecHub.Controllers
 {
-    
+    [Authorize]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class ClienteController : Controller
     {
         private readonly AppDbContext _context;
+
+        private int ObterMecanicoId()
+        {
+            var mecanicoId = User.FindFirstValue("MecanicoId");
+
+            if (string.IsNullOrWhiteSpace(mecanicoId))
+                throw new UnauthorizedAccessException("MecanicoId não encontrado na sessão.");
+
+            return int.Parse(mecanicoId);
+        }
 
         public ClienteController(AppDbContext context)
         {
@@ -18,16 +32,24 @@ namespace MecHub.Controllers
 
         [HttpGet]
         // Listar clientes
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var clientes = _context.cliente.ToList();
-            return View(clientes);    
+            var mecanicoId = ObterMecanicoId();
+
+            var clientes = await _context.cliente
+                .Where(c => c.MecanicoId == mecanicoId)
+                .ToListAsync();
+
+            return View(clientes);
         }
 
         [HttpGet]
-        public IActionResult Detalhe(int id)
+        public async Task<IActionResult> Detalhe(int id)
         {
-            var cliente = _context.cliente.Find(id);
+            var mecanicoId = ObterMecanicoId();
+
+            var cliente = await _context.cliente
+                .FirstOrDefaultAsync(c => c.Id == id && c.MecanicoId == mecanicoId);
 
             if (cliente == null)
                 return NotFound();
@@ -39,7 +61,7 @@ namespace MecHub.Controllers
         [HttpGet]
         public IActionResult Criar()
         {
-            return View();   
+            return View();
         }
 
         // Criar clientes
@@ -50,12 +72,15 @@ namespace MecHub.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
+            var mecanicoId = ObterMecanicoId();
+
             var cliente = new Cliente
             {
                 Nome = model.Nome,
                 Telefone = model.Telefone,
                 Cpf = model.Cpf,
-                Email = model.Email
+                Email = model.Email,
+                MecanicoId = mecanicoId
             };
 
             try
@@ -75,13 +100,16 @@ namespace MecHub.Controllers
         }
 
         [HttpGet]
-        public IActionResult Editar(int id)
+        public async Task<IActionResult> Editar(int id)
         {
-            var cliente = _context.cliente.Find(id);
+            var mecanicoId = ObterMecanicoId();
+
+            var cliente = await _context.cliente
+                .FirstOrDefaultAsync(c => c.Id == id && c.MecanicoId == mecanicoId);
 
             if (cliente == null)
                 return NotFound();
-           
+
             var model = new ClienteEditViewModel
             {
                 Nome = cliente.Nome,
@@ -96,12 +124,15 @@ namespace MecHub.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         // Editar clientes
-        public IActionResult Editar(int id, ClienteEditViewModel model)
+        public async Task<IActionResult> Editar(int id, ClienteEditViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            var cliente = _context.cliente.Find(id);
+            var mecanicoId = ObterMecanicoId();
+
+            var cliente = await _context.cliente
+                .FirstOrDefaultAsync(c => c.Id == id && c.MecanicoId == mecanicoId);
 
             if (id != model.Id)
                 return BadRequest();
@@ -115,7 +146,7 @@ namespace MecHub.Controllers
 
             try
             {
-                _context.SaveChanges();    
+                await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "Mecanico");
             }
             catch (Exception)
@@ -126,23 +157,29 @@ namespace MecHub.Controllers
         }
 
         [HttpGet]
-        public IActionResult Deletar(int id)
+       public async Task<IActionResult>  Deletar(int id)
         {
-            var cliente = _context.cliente.Find(id);
+            var mecanicoId = ObterMecanicoId();
+
+            var cliente = await _context.cliente
+                .FirstOrDefaultAsync(c => c.Id == id && c.MecanicoId == mecanicoId);
 
             if (cliente == null)
                 return NotFound();
 
             return View(cliente);
         }
-        
+
         [HttpPost]
         [ActionName("Deletar")]
         [ValidateAntiForgeryToken]
         // Deletar clientes
-        public IActionResult DeletarConfirmado(int id)
+        public async Task<IActionResult> DeletarConfirmado(int id)
         {
-            var cliente = _context.cliente.Find(id);
+            var mecanicoId = ObterMecanicoId();
+
+            var cliente = await _context.cliente
+                .FirstOrDefaultAsync(c => c.Id == id && c.MecanicoId == mecanicoId);
 
             if (cliente == null)
                 return NotFound();
@@ -152,16 +189,17 @@ namespace MecHub.Controllers
                 _context.cliente.Remove(cliente);
                 _context.SaveChanges();
 
-                return RedirectToAction("Index", "Mecanico");   
+                return RedirectToAction("Index", "Mecanico");
             }
             catch (Exception)
             {
                 ModelState.AddModelError("", "Erro ao tentar deletar o cliente.");
                 return View(cliente);
             }
-            
-            
+
+
         }
 
     }
 }
+

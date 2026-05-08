@@ -3,12 +3,26 @@ using Microsoft.EntityFrameworkCore;
 using MecHub.Data;
 using MecHub.Models;
 using MecHub.ViewModel;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace MecHub.Controllers
 {
+    [Authorize]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class VeiculosController : Controller
     {
         private readonly AppDbContext _context;
+
+        private int ObterMecanicoId()
+        {
+            var mecanicoId = User.FindFirstValue("MecanicoId");
+
+            if (string.IsNullOrWhiteSpace(mecanicoId))
+                throw new UnauthorizedAccessException("MecanicoId não encontrado na sessão.");
+
+            return int.Parse(mecanicoId);
+        }
 
         public VeiculosController(AppDbContext context)
         {
@@ -18,8 +32,11 @@ namespace MecHub.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            var mecanicoId = ObterMecanicoId();
+
             var veiculos = await _context.veiculo
                 .Include(v => v.Cliente)
+                .Where(v => v.MecanicoId == mecanicoId)
                 .OrderBy(v => v.Placa)
                 .Select(v => new VeiculoListViewModel
                 {
@@ -51,6 +68,8 @@ namespace MecHub.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
+            var mecanicoId = ObterMecanicoId();
+
             var placaExiste = await _context.veiculo
                 .AnyAsync(v => v.Placa == model.Placa);
 
@@ -61,7 +80,7 @@ namespace MecHub.Controllers
             }
 
             var clienteExiste = await _context.cliente
-                .AnyAsync(c => c.Id == model.ClienteId);
+                .AnyAsync(c => c.Id == model.ClienteId && c.MecanicoId == mecanicoId);
 
             if (!clienteExiste)
             {
@@ -76,7 +95,8 @@ namespace MecHub.Controllers
                 Marca = model.Marca,
                 ClienteId = model.ClienteId,
                 Cor = model.Cor,
-                AnoFabricacao = model.AnoFabricacao
+                AnoFabricacao = model.AnoFabricacao,
+                MecanicoId = mecanicoId
             };
 
             _context.veiculo.Add(veiculo);
@@ -88,9 +108,11 @@ namespace MecHub.Controllers
         [HttpGet]
         public async Task<IActionResult> Detalhes(int id)
         {
+            var mecanicoId = ObterMecanicoId();
+
             var veiculo = await _context.veiculo
                 .Include(v => v.Cliente)
-                .FirstOrDefaultAsync(v => v.Id == id);
+                .FirstOrDefaultAsync(v => v.Id == id && v.MecanicoId == mecanicoId);
 
             if (veiculo == null)
                 return NotFound();
@@ -111,12 +133,15 @@ namespace MecHub.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editar(Veiculo model)
+        public async Task<IActionResult> Editar(Veiculo model, int id)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            var veiculo = await _context.veiculo.FindAsync(model.Id);
+            var mecanicoId = ObterMecanicoId();
+
+            var veiculo = await _context.veiculo
+                .FirstOrDefaultAsync(v => v.Id == id && v.MecanicoId == mecanicoId);
 
             if (veiculo == null)
                 return NotFound();
@@ -136,9 +161,11 @@ namespace MecHub.Controllers
         [HttpGet]
         public async Task<IActionResult> Excluir(int id)
         {
+            var mecanicoId = ObterMecanicoId();
+
             var veiculo = await _context.veiculo
                 .Include(v => v.Cliente)
-                .FirstOrDefaultAsync(v => v.Id == id);
+                .FirstOrDefaultAsync(v => v.Id == id && v.MecanicoId == mecanicoId);
 
             if (veiculo == null)
                 return NotFound();
@@ -150,7 +177,10 @@ namespace MecHub.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ExcluirConfirmado(int id)
         {
-            var veiculo = await _context.veiculo.FindAsync(id);
+            var mecanicoId = ObterMecanicoId();
+
+            var veiculo = await _context.veiculo
+                .FirstOrDefaultAsync(v => v.Id == id && v.MecanicoId == mecanicoId);
 
             if (veiculo == null)
                 return NotFound();
@@ -164,7 +194,10 @@ namespace MecHub.Controllers
         [HttpGet]
         public async Task<IActionResult> AtualizarStatus(int id)
         {
-            var veiculo = await _context.veiculo.FirstOrDefaultAsync(v => v.Id == id);
+            var mecanicoId = ObterMecanicoId();
+
+            var veiculo = await _context.veiculo
+                .FirstOrDefaultAsync(v => v.Id == id && v.MecanicoId == mecanicoId);
 
             if (veiculo == null)
                 return NotFound();
@@ -184,12 +217,15 @@ namespace MecHub.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AtualizarStatus(VeiculoAtualizarStatusViewModel model)
+        public async Task<IActionResult> AtualizarStatus(VeiculoAtualizarStatusViewModel model, int id)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            var veiculo = await _context.veiculo.FirstOrDefaultAsync(v => v.Id == model.Id);
+            var mecanicoId = ObterMecanicoId();
+
+            var veiculo = await _context.veiculo
+                .FirstOrDefaultAsync(v => v.Id == id && v.MecanicoId == mecanicoId);
 
             if (veiculo == null)
                 return NotFound();

@@ -19,6 +19,11 @@ namespace MecHub.Models
 
         [Column("email")]
         public required string Email {get; set; } = string.Empty;
+
+        [Column("mecanico_id")]
+        public int MecanicoId {get; set; }
+
+        public Mecanico Mecanico {get; set; }
         public List<Veiculo> Veiculos { get; set; } = new();
     }
 }

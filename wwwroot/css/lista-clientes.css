@@ -138,26 +138,74 @@
     margin-bottom: 24px;
 }
 
+/* =========================
+   RESPONSIVIDADE MOBILE
+========================= */
+
 @media (max-width: 768px) {
-    .clientes-page {
-        padding: 20px;
+
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
-    .clientes-header {
-        flex-direction: column;
-        align-items: flex-start;
+    .clientes-table,
+    .veiculos-table,
+    .servicos-table,
+    .ordens-table {
+        min-width: 900px;
     }
 
-    .btn-novo-cliente {
+    .clientes-card,
+    .veiculos-card,
+    .servicos-card,
+    .ordens-card {
+        padding: 16px;
+    }
+
+    .clientes-header,
+    .veiculos-header,
+    .servicos-header,
+    .ordens-header {
+        gap: 16px;
+    }
+
+    .clientes-header h1,
+    .veiculos-header h1,
+    .servicos-header h1,
+    .ordens-header h1 {
+        font-size: 1.6rem;
+    }
+
+    .clientes-header p,
+    .veiculos-header p,
+    .servicos-header p,
+    .ordens-header p {
+        font-size: 0.92rem;
+    }
+
+    .btn-novo-cliente,
+    .btn-novo-veiculo,
+    .btn-novo-servico,
+    .btn-nova-ordem {
         width: 100%;
-        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .acoes {
         flex-direction: column;
+        width: 100%;
     }
 
     .btn-acao {
+        width: 100%;
         text-align: center;
+    }
+
+    .status-badge,
+    .tipo-badge {
+        white-space: nowrap;
     }
 }

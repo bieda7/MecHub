@@ -99,35 +99,37 @@
 <section class="panel">
     <h2>Últimas Ordens</h2>
 
-    <table class="dashboard-table">
-        <thead>
-            <tr>
-                <th>Cliente</th>
-                <th>Veículo</th>
-                <th>Status</th>
-                <th>Data</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @if (ultimasOrdens == null || !ultimasOrdens.Any())
-            {
+    <div class="table-responsive">
+        <table class="dashboard-table">
+            <thead>
                 <tr>
-                    <td colspan="4">Sem dados</td>
+                    <th>Cliente</th>
+                    <th>Veículo</th>
+                    <th>Status</th>
+                    <th>Data</th>
                 </tr>
-            }
-            else
-            {
-                foreach (var item in ultimasOrdens)
+            </thead>
+
+            <tbody>
+                @if (ultimasOrdens == null || !ultimasOrdens.Any())
                 {
                     <tr>
-                        <td>@item.Cliente?.Nome</td>
-                        <td>@item.Veiculo?.Modelo</td>
-                        <td>@item.StatusOrdem.ToString()</td>
-                        <td>@item.DataCriacao.ToString("dd/MM/yyyy")</td>
+                        <td colspan="4">Sem dados</td>
                     </tr>
                 }
-            }
-        </tbody>
-    </table>
+                else
+                {
+                    foreach (var item in ultimasOrdens)
+                    {
+                        <tr>
+                            <td>@item.Cliente?.Nome</td>
+                            <td>@item.Veiculo?.Modelo</td>
+                            <td>@item.StatusOrdem.ToString()</td>
+                            <td>@item.DataCriacao.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
 </section>

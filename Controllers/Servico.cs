@@ -2,12 +2,28 @@ using Microsoft.AspNetCore.Mvc;
 using MecHub.Data;
 using MecHub.Models;
 using MecHub.ViewModel;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace MecHub.Controllers
 {
+
+    [Authorize]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class ServicoController : Controller
     {
         private readonly AppDbContext _context;
+
+        private int ObterMecanicoId()
+        {
+            var mecanicoId = User.FindFirstValue("MecanicoId");
+
+            if (string.IsNullOrWhiteSpace(mecanicoId))
+                throw new UnauthorizedAccessException("MecanicoId não encontrado na sessão.");
+
+            return int.Parse(mecanicoId);
+        }
 
         public ServicoController(AppDbContext context)
         {
@@ -16,9 +32,12 @@ namespace MecHub.Controllers
 
         // Listar servicos
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var servicos = _context.servico
+            var mecanicoId = ObterMecanicoId();
+
+            var servicos = await _context.servico
+                .Where(s => s.MecanicoId == mecanicoId)
                 .Select(s => new ServicoListViewModel
                 {
                     Id = s.Id,
@@ -26,16 +45,19 @@ namespace MecHub.Controllers
                     Valor = s.Valor,
                     Tipo = s.Tipo
                 })
-                .ToList();
+                .ToListAsync();
 
             return View(servicos);
         }
         // Listar servicos por ID
         [HttpGet]
-        public IActionResult Detalhe(int id)
+        public async Task<IActionResult> Detalhe(int id)
         {
 
-            var servico = _context.servico.Find(id);
+            var mecanicoId = ObterMecanicoId();
+
+            var servico = await _context.servico
+                .FirstOrDefaultAsync(s => s.Id == id && s.MecanicoId == mecanicoId);
 
             if (servico == null)
                 return Content("Servico não encontrado");
@@ -57,11 +79,14 @@ namespace MecHub.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
+            var mecanicoId = ObterMecanicoId();
+
             var servico = new Servico
             {
                 Descricao = model.Descricao,
                 Valor = model.Valor,
-                Tipo = model.Tipo
+                Tipo = model.Tipo,
+                MecanicoId = mecanicoId
             };
 
             try
@@ -83,9 +108,12 @@ namespace MecHub.Controllers
 
 
         [HttpGet]
-        public IActionResult Deletar(int id)
+        public async Task<IActionResult> Deletar(int id)
         {
-            var servico = _context.servico.Find(id);
+            var mecanicoId = ObterMecanicoId();
+
+            var servico = await _context.servico
+                .FirstOrDefaultAsync(s => s.Id == id && s.MecanicoId == mecanicoId);
 
             if (servico == null)
                 return NotFound();
@@ -97,9 +125,12 @@ namespace MecHub.Controllers
         [HttpPost]
         [ActionName("Deletar")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeletarConfirmado(int id)
+        public async Task<IActionResult> DeletarConfirmado(int id)
         {
-            var servico = _context.servico.Find(id);
+            var mecanicoId = ObterMecanicoId();
+
+            var servico = await _context.servico
+                .FirstOrDefaultAsync(s => s.Id == id && s.MecanicoId == mecanicoId);
 
             if (servico == null)
                 return NotFound();
@@ -120,12 +151,15 @@ namespace MecHub.Controllers
 
         // Edtitar servico
         [HttpPost]
-        public IActionResult Editar(int id, ServicoEditViewModel model)
+        public async Task<IActionResult> Editar(int id, ServicoEditViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            var servico = _context.servico.Find(id);
+            var mecanicoId = ObterMecanicoId();
+
+            var servico = await _context.servico
+                .FirstOrDefaultAsync(s => s.Id == id && s.MecanicoId == mecanicoId);
 
             if (id != model.Id)
                 return BadRequest();

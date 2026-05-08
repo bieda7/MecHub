@@ -3,47 +3,123 @@ using Microsoft.EntityFrameworkCore;
 using MecHub.Data;
 using MecHub.Models;
 using MecHub.ViewModel;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace MecHub.Controllers
 {
+    [Authorize]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class MecanicoController : Controller
     {
         private readonly AppDbContext _context;
 
+
+        private int ObterMecanicoId()
+        {
+            var mecanicoId = User.FindFirstValue("MecanicoId");
+
+            if (string.IsNullOrWhiteSpace(mecanicoId))
+                throw new UnauthorizedAccessException("MecanicoId não encontrado na sessão.");
+
+            return int.Parse(mecanicoId);
+        }
         public MecanicoController(AppDbContext context)
         {
             _context = context;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> CompletarPerfil()
+        {
+            var mecanicoId = int.Parse(User.FindFirstValue("MecanicoId")!);
+
+            var mecanico = await _context.mecanico
+                .FirstOrDefaultAsync(m => m.Id == mecanicoId);
+
+            if (mecanico == null)
+                return NotFound();
+
+            var model = new MecanicoCompletarPerfilViewModel
+            {
+                Telefone = mecanico.Telefone ?? ""
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CompletarPerfil(MecanicoCompletarPerfilViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var mecanicoId = int.Parse(User.FindFirstValue("MecanicoId")!);
+
+            var mecanico = await _context.mecanico
+                .FirstOrDefaultAsync(m => m.Id == mecanicoId);
+
+            if (mecanico == null)
+                return NotFound();
+
+            mecanico.Telefone = model.Telefone;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Mecanico");
+        }
+
+
         // Dashboard do mecânico
         [HttpGet]
+
         public async Task<IActionResult> Index()
         {
-            ViewBag.TotalClientes = await _context.cliente.CountAsync();
-            ViewBag.TotalVeiculos = await _context.veiculo.CountAsync();
-            ViewBag.TotalServicos = await _context.servico.CountAsync();
-            ViewBag.TotalOrdens = await _context.ordem_servico.CountAsync();
+            var mecanicoId = ObterMecanicoId();
 
-            ViewBag.OrdensAbertas = await _context.ordem_servico.CountAsync(o => o.StatusOrdem == StatusOrdemEnum.Aberto);
-            ViewBag.OrdensAndamento = await _context.ordem_servico.CountAsync(o => o.StatusOrdem == StatusOrdemEnum.Em_andamento);
-            ViewBag.OrdensAguardando = await _context.ordem_servico.CountAsync(o => o.StatusOrdem == StatusOrdemEnum.AguardandoAprovacao);
-            ViewBag.OrdensFechadas = await _context.ordem_servico.CountAsync(o => o.StatusOrdem == StatusOrdemEnum.Fechada);
+            ViewBag.TotalClientes = await _context.cliente
+                .CountAsync(c => c.MecanicoId == mecanicoId);
+
+            ViewBag.TotalVeiculos = await _context.veiculo
+                .CountAsync(v => v.MecanicoId == mecanicoId);
+
+            ViewBag.TotalServicos = await _context.servico
+                .CountAsync(s => s.MecanicoId == mecanicoId);
+
+            ViewBag.TotalOrdens = await _context.ordem_servico
+                .CountAsync(o => o.MecanicoId == mecanicoId);
+
+            ViewBag.OrdensAbertas = await _context.ordem_servico
+                .CountAsync(o => o.MecanicoId == mecanicoId && o.StatusOrdem == StatusOrdemEnum.Aberto);
+
+            ViewBag.OrdensAndamento = await _context.ordem_servico
+                .CountAsync(o => o.MecanicoId == mecanicoId && o.StatusOrdem == StatusOrdemEnum.Em_andamento);
+
+            ViewBag.OrdensAguardando = await _context.ordem_servico
+                .CountAsync(o => o.MecanicoId == mecanicoId && o.StatusOrdem == StatusOrdemEnum.AguardandoAprovacao);
+
+            ViewBag.OrdensFechadas = await _context.ordem_servico
+                .CountAsync(o => o.MecanicoId == mecanicoId && o.StatusOrdem == StatusOrdemEnum.Fechada);
 
             ViewBag.UltimasOrdens = await _context.ordem_servico
                 .Include(o => o.Cliente)
                 .Include(o => o.Veiculo)
+                .Where(o => o.MecanicoId == mecanicoId)
                 .OrderByDescending(o => o.DataCriacao)
                 .Take(5)
                 .ToListAsync();
 
             return View();
         }
-
         // Lista de clientes para o mecânico
         [HttpGet]
         public async Task<IActionResult> ListaClientes()
         {
+            var mecanicoId = ObterMecanicoId();
+
             var clientes = await _context.cliente
+                .Where(c => c.MecanicoId == mecanicoId)
                 .OrderBy(c => c.Nome)
                 .ToListAsync();
 

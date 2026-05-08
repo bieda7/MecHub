@@ -37,6 +37,11 @@ namespace MecHub.Models
 
         [Column("data_atualizacao_status")]
         public DateTime DataAtualizacaoStatus { get; set; } = DateTime.Now;
+      
+        [Column("mecanico_id")]
+        public int MecanicoId {get; set; }
+
+        public Mecanico Mecanico {get; set; }
 
         // Relacionamentos
         public Cliente? Cliente { get; set; }

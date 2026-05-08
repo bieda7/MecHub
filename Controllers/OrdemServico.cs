@@ -5,13 +5,25 @@ using System.Security.Claims;
 using MecHub.Data;
 using MecHub.Models;
 using MecHub.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MecHub.Controllers
 {
+    [Authorize]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class OrdemServicoController : Controller
     {
         private readonly AppDbContext _context;
 
+        private int ObterMecanicoId()
+        {
+            var mecanicoId = User.FindFirstValue("MecanicoId");
+
+            if (string.IsNullOrWhiteSpace(mecanicoId))
+                throw new UnauthorizedAccessException("MecanicoId não encontrado na sessão.");
+
+            return int.Parse(mecanicoId);
+        }
         public OrdemServicoController(AppDbContext context)
         {
             _context = context;
@@ -20,11 +32,14 @@ namespace MecHub.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            var mecanicoId = ObterMecanicoId();
+
             var ordens = await _context.ordem_servico
                 .Include(o => o.Mecanico).ThenInclude(m => m.Usuario)
                 .Include(o => o.Cliente)
                 .Include(o => o.Veiculo)
                 .Include(o => o.Itens).ThenInclude(i => i.Servico)
+                .Where(o => o.MecanicoId == mecanicoId)
                 .OrderByDescending(o => o.DataCriacao)
                 .Select(o => new OrdemServicoListViewModel
                 {
@@ -67,12 +82,14 @@ namespace MecHub.Controllers
         [HttpGet]
         public async Task<IActionResult> Detalhes(int id)
         {
+            var mecanicoId = ObterMecanicoId();
+
             var ordem = await _context.ordem_servico
                 .Include(o => o.Mecanico).ThenInclude(m => m.Usuario)
                 .Include(o => o.Cliente)
                 .Include(o => o.Veiculo)
                 .Include(o => o.Itens).ThenInclude(i => i.Servico)
-                .FirstOrDefaultAsync(o => o.Id == id);
+                .FirstOrDefaultAsync(o => o.Id == id && o.MecanicoId == mecanicoId);
 
             if (ordem == null)
                 return NotFound();
@@ -98,6 +115,9 @@ namespace MecHub.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Criar(OrdemServicoCreateViewModel model)
         {
+
+            var mecanicoId = ObterMecanicoId();
+
             if (!ModelState.IsValid)
             {
                 await CarregarCombos(model);
@@ -111,8 +131,10 @@ namespace MecHub.Controllers
                 return View(model);
             }
 
-            var clienteExiste = await _context.cliente.AnyAsync(c => c.Id == model.ClienteId);
-            var veiculoExiste = await _context.veiculo.AnyAsync(v => v.Id == model.VeiculoId);
+            var clienteExiste = await _context.cliente
+                 .AnyAsync(c => c.Id == model.ClienteId && c.MecanicoId == mecanicoId);
+            var veiculoExiste = await _context.veiculo
+                 .AnyAsync(v => v.Id == model.VeiculoId && v.MecanicoId == mecanicoId);
             var mecanicoExiste = await _context.mecanico.AnyAsync(m => m.Id == model.MecanicoId);
 
             if (!clienteExiste)
@@ -159,6 +181,8 @@ namespace MecHub.Controllers
         [HttpGet]
         public async Task<IActionResult> Editar(int id)
         {
+            var mecanicoId = ObterMecanicoId();
+
             var ordem = await _context.ordem_servico
                 .Include(o => o.Itens)
                 .FirstOrDefaultAsync(o => o.Id == id);
@@ -168,7 +192,7 @@ namespace MecHub.Controllers
 
             var model = new OrdemServicoCreateViewModel
             {
-                MecanicoId = ordem.MecanicoId,
+                MecanicoId = mecanicoId,
                 ClienteId = ordem.ClienteId,
                 VeiculoId = ordem.VeiculoId,
                 StatusOrdem = ordem.StatusOrdem,
@@ -197,10 +221,12 @@ namespace MecHub.Controllers
                 return View(model);
             }
 
+            var mecanicoId = ObterMecanicoId();
+
             var ordem = await _context.ordem_servico
                 .Include(o => o.Itens)
-                .FirstOrDefaultAsync(o => o.Id == id);
-
+                .FirstOrDefaultAsync(o => o.Id == id && o.MecanicoId == mecanicoId);
+           
             if (ordem == null)
                 return NotFound();
 
@@ -237,11 +263,13 @@ namespace MecHub.Controllers
         [HttpGet]
         public async Task<IActionResult> Excluir(int id)
         {
+            var mecanicoId = ObterMecanicoId();
+
             var ordem = await _context.ordem_servico
                 .Include(o => o.Cliente)
                 .Include(o => o.Veiculo)
                 .Include(o => o.Itens)
-                .FirstOrDefaultAsync(o => o.Id == id);
+                .FirstOrDefaultAsync(o => o.Id == id && o.MecanicoId == mecanicoId);
 
             if (ordem == null)
                 return NotFound();
@@ -273,12 +301,15 @@ namespace MecHub.Controllers
         [HttpGet]
         public async Task<IActionResult> BuscarVeiculoPorPlaca(string placa)
         {
+
+            var mecanicoId = ObterMecanicoId();
+
             if (string.IsNullOrWhiteSpace(placa))
                 return BadRequest();
 
             var veiculo = await _context.veiculo
                 .Include(v => v.Cliente)
-                .Where(v => v.Placa == placa)
+                .Where(v => v.Placa == placa && v.MecanicoId == mecanicoId)
                 .Select(v => new
                 {
                     id = v.Id,
@@ -300,9 +331,13 @@ namespace MecHub.Controllers
 
         private async Task CarregarCombos(OrdemServicoCreateViewModel model)
         {
+            var mecanicoId = ObterMecanicoId();
+
+
             model.Mecanicos = await _context.mecanico
                 .Include(m => m.Usuario)
                 .OrderBy(m => m.Usuario!.Nome)
+                .Where(m => m.Id == mecanicoId)
                 .Select(m => new SelectListItem
                 {
                     Value = m.Id.ToString(),
@@ -312,6 +347,7 @@ namespace MecHub.Controllers
 
             model.Clientes = await _context.cliente
                 .OrderBy(c => c.Nome)
+                .Where(c => c.MecanicoId == mecanicoId)
                 .Select(c => new SelectListItem
                 {
                     Value = c.Id.ToString(),
@@ -322,6 +358,7 @@ namespace MecHub.Controllers
             model.Veiculos = await _context.veiculo
                 .Include(v => v.Cliente)
                 .OrderBy(v => v.Placa)
+                .Where(c => c.MecanicoId == mecanicoId)
                 .Select(v => new SelectListItem
                 {
                     Value = v.Id.ToString(),
@@ -331,6 +368,7 @@ namespace MecHub.Controllers
 
             model.Servicos = await _context.servico
                 .OrderBy(s => s.Descricao)
+                .Where(c => c.MecanicoId == mecanicoId)
                 .Select(s => new SelectListItem
                 {
                     Value = s.Id.ToString(),

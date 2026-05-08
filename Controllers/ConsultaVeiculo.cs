@@ -3,12 +3,28 @@ using Microsoft.EntityFrameworkCore;
 using MecHub.Data;
 using MecHub.Models;
 using MecHub.ViewModel;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+
+
 
 namespace MecHub.Controllers
 {
+    [Authorize]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class ConsultaVeiculo : Controller
     {
         private readonly AppDbContext _context;
+
+        private int ObterMecanicoId()
+        {
+            var mecanicoId = User.FindFirstValue("MecanicoId");
+
+            if (string.IsNullOrWhiteSpace(mecanicoId))
+                throw new UnauthorizedAccessException("MecanicoId não encontrado na sessão.");
+
+            return int.Parse(mecanicoId);
+        }
 
         public ConsultaVeiculo(AppDbContext context)
         {

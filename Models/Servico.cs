@@ -18,6 +18,11 @@ namespace MecHub.Models
         [Column("tipo")]
         public required string Tipo { get; set; }
 
+        [Column("mecanico_id")]
+        public int MecanicoId {get; set; }
+
+        public Mecanico Mecanico {get; set; }
+
         public List<ItemOrdemServico> Itens { get; set; } = new();
     }
 }
