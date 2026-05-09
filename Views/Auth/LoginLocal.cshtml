@@ -7,6 +7,23 @@
 }
 
 <main class="login-page">
+
+    <header class="register-header">
+        <a asp-controller="Home" asp-action="Index" class="header-logo">
+            MecHub
+        </a>
+
+        @* <nav class="header-menu">
+            <a asp-controller="Home" asp-action="Index" asp-fragment="servicos">Serviços</a>
+            <a asp-controller="Home" asp-action="Index" asp-fragment="beneficios">Benefícios</a>
+            <a asp-controller="Home" asp-action="Index" asp-fragment="quem-somos">Quem somos</a>
+        </nav> *@
+
+        <a asp-controller="Usuario" asp-action="Criar" class="btn-header-login">
+            Cadastro
+        </a>
+    </header>
+
     <section class="login-card">
 
         <div class="brand-background">
@@ -14,11 +31,13 @@
         </div>
 
         <h1>Login</h1>
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger text-center py-2">
+        </div>
 
         <form asp-controller="Auth" asp-action="LoginLocal" method="post" class="login-form">
 
             <div class="input-group-login">
-                <input asp-for="Email" placeholder="Nome completo ou e-mail" autocomplete="username" />
+                <input asp-for="Email" placeholder="E-mail" autocomplete="username" />
 
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>

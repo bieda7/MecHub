@@ -5,47 +5,48 @@
     ViewData["Title"] = "Consulta Veicular";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+@section Styles {
+    <link rel="stylesheet" href="~/css/consulta-placa.css" asp-append-version="true" />
+}
 
-            <div class="card shadow border-0">
-                <div class="card-body p-4">
+<div class="consulta-page">
+    <div class="consulta-card">
 
-                    <h2 class="text-center mb-3">Consulta Veicular</h2>
+        <h2 class="consulta-title">
+            Consulta Veicular
+        </h2>
 
-                    <p class="text-muted text-center">
-                        Informe a placa do veículo para acompanhar o andamento da manutenção.
-                    </p>
+        <p class="consulta-description">
+            Informe a placa do veículo para acompanhar o andamento da manutenção.
+        </p>
 
-                    @if (TempData["Erro"] != null)
-                    {
-                        <div class="alert alert-danger">
-                            @TempData["Erro"]
-                        </div>
-                    }
+        @if (TempData["Erro"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["Erro"]
+            </div>
+        }
 
-                    <form asp-action="Index" method="post">
-                        @Html.AntiForgeryToken()
+        <form asp-action="Index" method="post">
+            @Html.AntiForgeryToken()
 
-                        <div class="mb-3">
-                            <label asp-for="Placa" class="form-label"></label>
-                            <input asp-for="Placa" class="form-control text-uppercase" placeholder="Ex: ABC1D23" />
-                            <span asp-validation-for="Placa" class="text-danger"></span>
-                        </div>
+            <div class="mb-4">
+                <label asp-for="Placa" class="form-label consulta-label"></label>
 
-                        <button type="submit" class="btn btn-primary w-100">
-                            Consultar Status
-                        </button>
-                    </form>
+                <input asp-for="Placa"
+                       class="form-control consulta-input text-uppercase"
+                       placeholder="Ex: ABC1D23" />
 
-                </div>
+                <span asp-validation-for="Placa" class="text-danger"></span>
             </div>
 
-        </div>
+            <button type="submit" class="btn btn-consultar">
+                Consultar Status
+            </button>
+        </form>
+
     </div>
 </div>
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

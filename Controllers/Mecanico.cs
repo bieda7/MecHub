@@ -5,6 +5,10 @@ using MecHub.Models;
 using MecHub.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+// Recursos de autenticação
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace MecHub.Controllers
 {
@@ -15,12 +19,12 @@ namespace MecHub.Controllers
         private readonly AppDbContext _context;
 
 
-        private int ObterMecanicoId()
+        private int? ObterMecanicoId()
         {
             var mecanicoId = User.FindFirstValue("MecanicoId");
 
             if (string.IsNullOrWhiteSpace(mecanicoId))
-                throw new UnauthorizedAccessException("MecanicoId não encontrado na sessão.");
+                return null;
 
             return int.Parse(mecanicoId);
         }
@@ -77,6 +81,12 @@ namespace MecHub.Controllers
         public async Task<IActionResult> Index()
         {
             var mecanicoId = ObterMecanicoId();
+
+            if (mecanicoId == null)
+            {
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                return RedirectToAction("LoginLocal", "Auth");
+            }
 
             ViewBag.TotalClientes = await _context.cliente
                 .CountAsync(c => c.MecanicoId == mecanicoId);
@@ -236,5 +246,6 @@ namespace MecHub.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
     }
 }

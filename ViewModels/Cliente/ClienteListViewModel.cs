@@ -15,5 +15,10 @@ namespace MecHub.ViewModel
 
         [Column("email")]
         public required string Email { get; set; }
+
+        [Column("cpf")]
+        public required string Cpf { get; set; }
+
+
     }
 }

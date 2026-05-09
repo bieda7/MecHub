@@ -2,9 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using MecHub.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
+using QuestPDF.Infrastructure;
+using MecHub.Services;
 
 var supportedCultures = new[]
 {
@@ -21,7 +22,8 @@ var localizationOptions = new RequestLocalizationOptions
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuthentication(options => 
+// AUTH
+builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
@@ -31,55 +33,55 @@ builder.Services.AddAuthentication(options =>
 {
     options.ClientId = "332036407856-q5a4k358e7ntlftp0frl181ek2f179oi.apps.googleusercontent.com";
     options.ClientSecret = "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";
-}
-);
+});
 
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+// QUESTPDF
+QuestPDF.Settings.License = LicenseType.Community;
 
+builder.Services.AddScoped<OrdemServicoPdfService>();
+
+// LOCALIZATION
+builder.Services.AddLocalization(options =>
+    options.ResourcesPath = "Resources");
+
+// DATABASE
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
+        ServerVersion.AutoDetect(
+            builder.Configuration.GetConnectionString("DefaultConnection")
+        )
     )
 );
 
-// Add services to the container.
+// MVC
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// PIPELINE
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-app.UseRouting();
 
-app.UseAuthorization();
+app.UseStaticFiles();
+
+app.UseRouting();
 
 app.UseRequestLocalization(localizationOptions);
 
-app.MapStaticAssets();
+app.UseAuthentication();
 
+app.UseAuthorization();
+
+// ROTA PADRÃO
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Teste}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Usuario}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
-
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+);
 
 app.Run();

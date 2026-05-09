@@ -4,19 +4,14 @@ namespace MecHub.ViewModel
 {
     public class ServicoCreateViewModel
     {
-        [Required(ErrorMessageResourceName = "CampoObrigatorio",
-            ErrorMessageResourceType = typeof(SharedResource))]
-        public required string Descricao { get; set; }
+        [Required(ErrorMessage = "Informe a descrição.")]
+        public string Descricao { get; set; } = string.Empty;
 
-        [Required(ErrorMessageResourceName = "CampoObrigatorio",
-            ErrorMessageResourceType = typeof(SharedResource))]
+        [Required(ErrorMessage = "Informe o valor.")]
+        [Range(0.01, 999999.99, ErrorMessage = "Informe um valor válido.")]
         public decimal Valor { get; set; }
 
-        
-        [Required(ErrorMessageResourceName = "CampoObrigatorio",
-            ErrorMessageResourceType = typeof(SharedResource))]
-        public required string  Tipo { get; set; }
-
-        
+        [Required(ErrorMessage = "Informe o tipo.")]
+        public string Tipo { get; set; } = string.Empty;
     }
 }

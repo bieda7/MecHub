@@ -6,6 +6,7 @@ using MecHub.Data;
 using MecHub.Models;
 using MecHub.ViewModel;
 using Microsoft.AspNetCore.Authorization;
+using MecHub.Services;
 
 namespace MecHub.Controllers
 {
@@ -14,6 +15,7 @@ namespace MecHub.Controllers
     public class OrdemServicoController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly OrdemServicoPdfService _pdfService;
 
         private int ObterMecanicoId()
         {
@@ -24,9 +26,12 @@ namespace MecHub.Controllers
 
             return int.Parse(mecanicoId);
         }
-        public OrdemServicoController(AppDbContext context)
+
+        public OrdemServicoController(AppDbContext context, OrdemServicoPdfService pdfService)
         {
             _context = context;
+            _pdfService = pdfService;
+
         }
 
         [HttpGet]
@@ -226,7 +231,7 @@ namespace MecHub.Controllers
             var ordem = await _context.ordem_servico
                 .Include(o => o.Itens)
                 .FirstOrDefaultAsync(o => o.Id == id && o.MecanicoId == mecanicoId);
-           
+
             if (ordem == null)
                 return NotFound();
 
@@ -260,42 +265,34 @@ namespace MecHub.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Excluir(int id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ExcluirConfirmado(int id)
         {
             var mecanicoId = ObterMecanicoId();
 
             var ordem = await _context.ordem_servico
-                .Include(o => o.Cliente)
-                .Include(o => o.Veiculo)
                 .Include(o => o.Itens)
                 .FirstOrDefaultAsync(o => o.Id == id && o.MecanicoId == mecanicoId);
 
             if (ordem == null)
                 return NotFound();
 
-            return View(ordem);
-        }
+            try
+            {
+                _context.item_ordem_servico.RemoveRange(ordem.Itens);
+                _context.ordem_servico.Remove(ordem);
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ExcluirConfirmado(int id)
-        {
-            var ordem = await _context.ordem_servico
-                .Include(o => o.Itens)
-                .FirstOrDefaultAsync(o => o.Id == id);
+                await _context.SaveChangesAsync();
 
-            if (ordem == null)
-                return NotFound();
-
-            _context.item_ordem_servico.RemoveRange(ordem.Itens);
-            _context.ordem_servico.Remove(ordem);
-
-            await _context.SaveChangesAsync();
-
-            TempData["Sucesso"] = "Ordem de serviço excluída com sucesso.";
-
-            return RedirectToAction(nameof(Index));
+                TempData["Sucesso"] = "Ordem de serviço excluída com sucesso.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                TempData["Erro"] = "Erro ao tentar excluir a ordem de serviço.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         [HttpGet]
@@ -402,6 +399,53 @@ namespace MecHub.Controllers
                 .FirstOrDefaultAsync(m => m.Usuario != null && m.Usuario.Email == email);
 
             return mecanico?.Id ?? 0;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GerarPdf(int id)
+        {
+            var mecanicoId = ObterMecanicoId();
+
+            var ordem = await _context.ordem_servico
+                .Include(o => o.Mecanico)
+                    .ThenInclude(m => m.Usuario)
+                .Include(o => o.Cliente)
+                .Include(o => o.Veiculo)
+                .Include(o => o.Itens)
+                    .ThenInclude(i => i.Servico)
+                .FirstOrDefaultAsync(o => o.Id == id && o.MecanicoId == mecanicoId);
+
+            if (ordem == null)
+                return NotFound();
+
+            var pdfBytes = _pdfService.GerarPdf(ordem);
+
+            var fileName = $"OS-{ordem.Id}-{ordem.Veiculo.Placa}.pdf";
+
+            return File(pdfBytes, "application/pdf", fileName);
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> DownloadPdf(int id)
+        {
+            var ordem = await _context.ordem_servico
+                .Include(o => o.Mecanico)
+                    .ThenInclude(m => m.Usuario)
+                .Include(o => o.Cliente)
+                .Include(o => o.Veiculo)
+                .Include(o => o.Itens)
+                    .ThenInclude(i => i.Servico)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (ordem == null)
+                return NotFound();
+
+            var pdfBytes = _pdfService.GerarPdf(ordem);
+
+            var fileName = $"OS-{ordem.Id}-{ordem.Veiculo.Placa}.pdf";
+
+            return File(pdfBytes, "application/pdf", fileName);
         }
     }
 }

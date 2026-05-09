@@ -8,12 +8,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MecHub.Controllers
 {
-
     [Authorize]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class ServicoController : Controller
     {
         private readonly AppDbContext _context;
+
+        public ServicoController(AppDbContext context)
+        {
+            _context = context;
+        }
 
         private int ObterMecanicoId()
         {
@@ -25,12 +29,6 @@ namespace MecHub.Controllers
             return int.Parse(mecanicoId);
         }
 
-        public ServicoController(AppDbContext context)
-        {
-            _context = context;
-        }
-
-        // Listar servicos
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -49,18 +47,17 @@ namespace MecHub.Controllers
 
             return View(servicos);
         }
-        // Listar servicos por ID
+
         [HttpGet]
         public async Task<IActionResult> Detalhe(int id)
         {
-
             var mecanicoId = ObterMecanicoId();
 
             var servico = await _context.servico
                 .FirstOrDefaultAsync(s => s.Id == id && s.MecanicoId == mecanicoId);
 
             if (servico == null)
-                return Content("Servico não encontrado");
+                return NotFound();
 
             return View(servico);
         }
@@ -68,13 +65,12 @@ namespace MecHub.Controllers
         [HttpGet]
         public IActionResult Criar()
         {
-            return View();
+            return View(new ServicoCreateViewModel());
         }
 
-        // Criar novos servicos
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Criar(ServicoCreateViewModel model)
+        public async Task<IActionResult> Criar(ServicoCreateViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
@@ -92,23 +88,20 @@ namespace MecHub.Controllers
             try
             {
                 _context.servico.Add(servico);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
-                return View(servico);
+                TempData["Sucesso"] = "Serviço cadastrado com sucesso.";
+                return RedirectToAction(nameof(Index));
             }
-            catch (Exception)
+            catch
             {
-                // Log futuramente (ILogger)
                 ModelState.AddModelError("", "Não foi possível salvar o serviço. Tente novamente.");
-
                 return View(model);
             }
-
         }
 
-
         [HttpGet]
-        public async Task<IActionResult> Deletar(int id)
+        public async Task<IActionResult> Editar(int id)
         {
             var mecanicoId = ObterMecanicoId();
 
@@ -118,12 +111,68 @@ namespace MecHub.Controllers
             if (servico == null)
                 return NotFound();
 
-            return View(servico);
+            var model = new ServicoEditViewModel
+            {
+                Id = servico.Id,
+                Descricao = servico.Descricao,
+                Valor = servico.Valor,
+                Tipo = servico.Tipo
+            };
+
+            return View(model);
         }
 
-        // Deletar servico
         [HttpPost]
-        [ActionName("Deletar")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Editar(int id, ServicoEditViewModel model)
+        {
+            if (id != model.Id)
+                return BadRequest();
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var mecanicoId = ObterMecanicoId();
+
+            var servico = await _context.servico
+                .FirstOrDefaultAsync(s => s.Id == id && s.MecanicoId == mecanicoId);
+
+            if (servico == null)
+                return NotFound();
+
+            servico.Descricao = model.Descricao;
+            servico.Valor = model.Valor;
+            servico.Tipo = model.Tipo;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+
+                TempData["Sucesso"] = "Serviço atualizado com sucesso.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                ModelState.AddModelError("", "Erro ao tentar editar dados do serviço.");
+                return View(model);
+            }
+        }
+
+        // [HttpGet]
+        // public async Task<IActionResult> Deletar(int id)
+        // {
+        //     var mecanicoId = ObterMecanicoId();
+
+        //     var servico = await _context.servico
+        //         .FirstOrDefaultAsync(s => s.Id == id && s.MecanicoId == mecanicoId);
+
+        //     if (servico == null)
+        //         return NotFound();
+
+        //     return View(servico);
+        // }
+
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletarConfirmado(int id)
         {
@@ -138,50 +187,16 @@ namespace MecHub.Controllers
             try
             {
                 _context.servico.Remove(servico);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
-                return View("Index", "Mecanico");
+                TempData["Sucesso"] = "Serviço excluído com sucesso.";
+                return RedirectToAction(nameof(Index));
             }
-            catch (Exception)
+            catch
             {
-                ModelState.AddModelError("", "Erro ao tentar deletar o cliente.");
-                return View(servico);
+                TempData["Erro"] = "Erro ao tentar deletar o serviço.";
+                return RedirectToAction(nameof(Index));
             }
         }
-
-        // Edtitar servico
-        [HttpPost]
-        public async Task<IActionResult> Editar(int id, ServicoEditViewModel model)
-        {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var mecanicoId = ObterMecanicoId();
-
-            var servico = await _context.servico
-                .FirstOrDefaultAsync(s => s.Id == id && s.MecanicoId == mecanicoId);
-
-            if (id != model.Id)
-                return BadRequest();
-
-            if (servico == null)
-                return NotFound();
-
-            servico.Descricao = model.Descricao;
-            servico.Valor = model.Valor;
-            servico.Tipo = model.Tipo;
-
-            try
-            {
-                _context.SaveChanges();
-                return View("Index", "Mecanico");
-            }
-            catch (Exception)
-            {
-                ModelState.AddModelError("", "Erro ao tentar editar dados do servico.");
-                return View(model);
-            }
-        }
-
     }
 }

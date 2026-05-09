@@ -119,8 +119,19 @@
     border: 1px solid rgba(255, 2, 46, 0.35);
 }
 
+.btn-acao.detalhes {
+    background: #262a31;
+    color: #fff;
+    border: 1px solid #3a3f48;
+}
+
 .btn-acao.excluir:hover {
     background: #FF022E;
+    color: #fff;
+}
+
+.btn-acao.detalhes:hover {
+    background: #343944;
     color: #fff;
 }
 

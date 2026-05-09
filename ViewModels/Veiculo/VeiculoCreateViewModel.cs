@@ -1,45 +1,36 @@
 using System.ComponentModel.DataAnnotations;
 using MecHub.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace MecHub.ViewModel
 {
     public class VeiculoCreateViewModel
     {
-        [Required(ErrorMessage = "CampoObrigatorio")]
-        public required string Placa { get; set; }
+        [Required(ErrorMessage = "Informe a placa.")]
+        public string Placa { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "CampoObrigatorio")]
-        public required string Modelo { get; set; }
+        [Required(ErrorMessage = "Informe o modelo.")]
+        public string Modelo { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "CampoObrigatorio")]
-        public required string Marca { get; set; }
+        [Required(ErrorMessage = "Informe a marca.")]
+        public string Marca { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "CampoObrigatorio")]
+        [Required(ErrorMessage = "Selecione um cliente.")]
         public int ClienteId { get; set; }
 
-        [Required(ErrorMessage = "CampoObrigatorio")]
+        [Required(ErrorMessage = "Informe a cor.")]
+        public string Cor { get; set; } = string.Empty;
 
-        public string Cor { get; set; }
-
-        [Required(ErrorMessage = "CampoObrigatorio")]
-
+        [Required(ErrorMessage = "Informe o ano de fabricação.")]
         public int AnoFabricacao { get; set; }
 
-        [Required(ErrorMessage = "CampoObrigatorio")]
-
-        public DateTime DataCriacao { get; set; }
-
-        [Required(ErrorMessage = "CampoObrigatorio")]
-
-        public StatusVeiculoEnum StatusAtual { get; set; }
-
-        [Required(ErrorMessage = "CampoObrigatorio")]
+        [Required(ErrorMessage = "Informe o status atual.")]
+        public StatusVeiculoEnum StatusAtual { get; set; } = StatusVeiculoEnum.PreAvaliacao;
 
         public string? ObservacaoStatus { get; set; }
-        
 
-        [Required(ErrorMessage = "CampoObrigatorio")]
+        public List<SelectListItem> Clientes { get; set; } = new();
 
-        public DateTime DataAtualizacaoStatus { get; set; }
+        public List<SelectListItem> StatusOptions { get; set; } = new();
     }
 }

@@ -60,6 +60,7 @@ namespace MecHub.Controllers
         }
 
         // 🔹 CRIAR (GET)
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Criar()
         {
@@ -67,12 +68,21 @@ namespace MecHub.Controllers
         }
 
         // 🔹 CRIAR (POST)
+        [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Criar(UsuarioCreateViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
+
+            var emailExiste = _context.usuario.Any(u => u.Email == model.Email);
+
+            if (emailExiste)
+            {
+                ModelState.AddModelError("Email", "Este e-mail já está cadastrado.");
+                return View(model);
+            }
 
             var hasher = new PasswordHasher<Usuario>();
 
@@ -100,7 +110,7 @@ namespace MecHub.Controllers
                 _context.mecanico.Add(mecanico);
                 _context.SaveChanges();
 
-                return RedirectToAction("Index");
+                return RedirectToAction("LoginLocal", "Auth");
             }
             catch (Exception)
             {

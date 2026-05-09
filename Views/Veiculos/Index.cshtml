@@ -7,7 +7,7 @@
 
 
 
-<link rel="stylesheet" href="~/css/lista-veiculos.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/listas.css" asp-append-version="true" />
 
 <section class="veiculos-page">
 
@@ -113,10 +113,12 @@
                                         Editar
                                     </a>
 
-                                    <a asp-controller="Veiculos" asp-action="Excluir" asp-route-id="@veiculo.Id"
-                                           class="btn-acao excluir">
+                                    <button type="button" class="btn-acao excluir" data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal"
+                                            data-delete-action="@Url.Action("ExcluirConfirmado", "Veiculos", new { id = veiculo.Id })"
+                                            data-delete-message="Você tem certeza que deseja excluir esse dado permanentemente do sistema? Essa ação é irreversível.">
                                         Excluir
-                                    </a>
+                                    </button>
                                 </td>
                             </tr>
                         }

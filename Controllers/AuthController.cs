@@ -56,11 +56,20 @@ namespace MecHub.Controllers
 
         // Exibe a tela de login local
         [HttpGet]
-        public IActionResult LoginLocal()
+        public async Task<IActionResult> LoginLocal()
         {
-            // Se o usuário já estiver autenticado, não deixa voltar para a tela de login
             if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                var mecanicoId = User.FindFirstValue("MecanicoId");
+
+                if (string.IsNullOrWhiteSpace(mecanicoId))
+                {
+                    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                    return View();
+                }
+
                 return RedirectToAction("Index", "Mecanico");
+            }
 
             return View();
         }
@@ -81,7 +90,7 @@ namespace MecHub.Controllers
             // Se não encontrar o usuário, retorna erro genérico
             if (usuario == null)
             {
-                ModelState.AddModelError("", "Usuário ou senha inválidos.");
+                ModelState.AddModelError("", "Email inválido");
                 return View(model);
             }
 
@@ -98,7 +107,7 @@ namespace MecHub.Controllers
             // Se a senha estiver errada, retorna erro genérico
             if (resultado == PasswordVerificationResult.Failed)
             {
-                ModelState.AddModelError("", "Usuário ou senha inválidos.");
+                ModelState.AddModelError("", "Senha inválida.");
                 return View(model);
             }
 
@@ -268,6 +277,7 @@ namespace MecHub.Controllers
 
             // Cria o principal, que representa o usuário autenticado
             var principal = new ClaimsPrincipal(identity);
+
 
             // Grava o cookie de autenticação no navegador
             await HttpContext.SignInAsync(
