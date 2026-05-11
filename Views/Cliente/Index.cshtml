@@ -7,9 +7,9 @@
 
 <link rel="stylesheet" href="~/css/listas.css" asp-append-version="true" />
 
-<section class="clientes-page">
+<section class="list-page">
 
-    <div class="clientes-header">
+    <div class="list-header">
         <div>
             <h1>Clientes</h1>
             <p>Gerencie os clientes cadastrados no sistema.</p>
@@ -20,7 +20,7 @@
         </a>
     </div>
 
-    <div class="clientes-card">
+    <div class="list-card">
 
         @if (Model == null || !Model.Any())
         {
@@ -43,7 +43,7 @@
         {
             <div class="table-responsive">
 
-                <table class="clientes-table">
+                <table class="list-table">
 
                     <thead>
                         <tr>

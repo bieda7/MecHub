@@ -7,23 +7,23 @@
 
 <link rel="stylesheet" href="~/css/forms.css" asp-append-version="true" />
 
-<section class="cliente-page">
+<section class="register-page">
 
-    <div class="cliente-header">
+    <div class="register-header">
         <div>
-            <span class="cliente-eyebrow">Edição</span>
+            <span class="form-eyebrow">Edição</span>
             <h1>Editar Cliente</h1>
             <p>Atualize os dados cadastrais do cliente.</p>
         </div>
 
         <a asp-controller="Cliente"
            asp-action="Index"
-           class="btn-fechar">
+           class="btn-back">
             x
         </a>
     </div>
 
-    <div class="cliente-card">
+    <div class="form-card">
 
         <form asp-controller="Cliente"
               asp-action="Editar"
@@ -86,16 +86,16 @@
 
             </div>
 
-            <div class="cliente-info-box">
+            <div class="form-info-box">
                 <strong>Atenção:</strong>
                 alterar os dados do cliente pode impactar veículos associados, consultas e ordens de serviço vinculadas.
             </div>
 
-            <div class="acoes-form">
+            <div class="form-actions">
 
                 <a asp-controller="Cliente"
                    asp-action="Index"
-                   class="btn-cancelar">
+                   class="btn-cancel">
                     Cancelar
                 </a>
 

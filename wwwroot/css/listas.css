@@ -101,7 +101,7 @@
     border: 1px solid var(--border-dark);
     border-radius: 16px;
     padding: 22px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
 }
 
 .table-responsive {
@@ -304,6 +304,7 @@
 ========================= */
 
 @media (max-width: 768px) {
+
     .clientes-page,
     .veiculos-page,
     .servicos-page,
@@ -370,9 +371,35 @@
         align-items: center;
     }
 
+    .acoes-col {
+        text-align: right;
+        white-space: nowrap;
+    }
+
     .acoes {
-        flex-direction: column;
-        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: nowrap;
+    }
+
+    .btn-acao {
+        min-width: 82px;
+        height: 36px;
+        padding: 0 12px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 8px;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: .85rem;
+        line-height: 1;
+        transition: .2s ease;
+        white-space: nowrap;
     }
 
     .btn-acao {

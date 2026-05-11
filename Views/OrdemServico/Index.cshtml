@@ -70,11 +70,11 @@
                                 <td>@ordem.ValorTotal.ToString("C")</td>
                                 <td>@ordem.DataCriacao.ToString("dd/MM/yyyy")</td>
 
-                                <td class="acoes">
-                                    <a asp-controller="OrdemServico" asp-action="Detalhes" asp-route-id="@ordem.Id"
+                                @* <td class="acoes">
+                                    @* <a asp-controller="OrdemServico" asp-action="Detalhes" asp-route-id="@ordem.Id"
                                            class="btn-acao detalhes">
                                         Detalhes
-                                    </a>
+                                    </a> 
 
                                     <a asp-controller="OrdemServico" asp-action="GerarPdf" asp-route-id="@ordem.Id"
                                            class="btn-acao pdf">
@@ -91,6 +91,27 @@
                                             data-delete-message="Você tem certeza que deseja excluir esse dado permanentemente do sistema? Essa ação é irreversível.">
                                         Excluir
                                     </button>
+                                </td> *@
+
+                                <td class="acoes-col">
+                                    <div class="acoes">
+                                        <a asp-controller="OrdemServico" asp-action="GerarPdf" asp-route-id="@ordem.Id"
+                                        class="btn-acao pdf">
+                                            PDF
+                                        </a>
+
+                                        <a asp-controller="OrdemServico" asp-action="Editar" asp-route-id="@ordem.Id"
+                                        class="btn-acao editar">
+                                            Editar
+                                        </a>
+
+                                        <button type="button" class="btn-acao excluir" data-bs-toggle="modal"
+                                                data-bs-target="#deleteModal"
+                                                data-delete-action="@Url.Action("ExcluirConfirmado", "OrdemServico", new { id = ordem.Id })"
+                                                data-delete-message="Você tem certeza que deseja excluir esse dado permanentemente do sistema? Essa ação é irreversível.">
+                                            Excluir
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         }
