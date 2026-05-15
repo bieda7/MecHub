@@ -305,6 +305,8 @@ namespace MecHub.Controllers
             return View();
         }
 
+        // 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EsqueciSenha(EsqueciSenhaViewModel model)
@@ -318,7 +320,7 @@ namespace MecHub.Controllers
             if (usuario == null)
             {
                 TempData["Mensagem"] = "Se o e-mail estiver cadastrado, enviaremos as instruções.";
-                return RedirectToAction("LoginLocal", "Auth");
+                return RedirectToAction("Login", "Auth");
             }
 
             var tokenBytes = System.Security.Cryptography.RandomNumberGenerator.GetBytes(64);
@@ -333,17 +335,27 @@ namespace MecHub.Controllers
                 "ResetarSenha",
                 "Auth",
                 new { email = usuario.Email, token = token },
-                protocol: Request.Scheme
+                protocol: "https"
             );
 
-            await _emailService.EnviarEmailAsync(
-                usuario.Email,
-                "Redefinição de senha - MecHub",
-                $"Olá! Clique no link abaixo para redefinir sua senha:\n\n{link}\n\nEsse link expira em 30 minutos."
-            );
+            try
+            {
+                await _emailService.EnviarEmailAsync(
+                    usuario.Email,
+                    "Redefinição de senha - MecHub",
+                    $"Olá! Clique no link abaixo para redefinir sua senha:\n\n{link}\n\nEsse link expira em 30 minutos."
+                );
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao enviar e-mail de recuperação: {ex.Message}");
+
+                TempData["Mensagem"] = "Não foi possível enviar o e-mail agora. Tente novamente em alguns minutos.";
+                return RedirectToAction("EsqueciSenha", "Auth");
+            }
 
             TempData["Mensagem"] = "Se o e-mail estiver cadastrado, enviaremos as instruções.";
-            return RedirectToAction("LoginLocal", "Auth");
+            return RedirectToAction("Login", "Auth");
         }
 
         [HttpGet]
