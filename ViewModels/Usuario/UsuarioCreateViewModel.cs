@@ -14,10 +14,12 @@ namespace MecHub.ViewModel
         [EmailAddress]
         public required string Email { get; set; }
 
-        [Required(ErrorMessage = "Informe sua senha.")]
-        [MinLength(10)]
+        [Required(ErrorMessage = "Informe a senha.")]
+        [MinLength(8, ErrorMessage = "A senha deve ter no mínimo 8 caracteres.")]
+        [RegularExpression(@"^(?=.*[!@#$%^&*(),.?""{}|<>_\-+=/\\[\]:;']).+$",
+        ErrorMessage = "A senha deve conter pelo menos um caractere especial.")]
         [DataType(DataType.Password)]
-        public required string Senha { get; set; }
+        public string Senha { get; set; }
 
         [Required(ErrorMessage = "Confirme sua senha.")]
         [MinLength(10)]
