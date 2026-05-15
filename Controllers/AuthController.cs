@@ -320,7 +320,7 @@ namespace MecHub.Controllers
             if (usuario == null)
             {
                 TempData["Mensagem"] = "Se o e-mail estiver cadastrado, enviaremos as instruções.";
-                return RedirectToAction("Login", "Auth");
+                return RedirectToAction("LoginLocal", "Auth");
             }
 
             var tokenBytes = System.Security.Cryptography.RandomNumberGenerator.GetBytes(64);
@@ -362,7 +362,7 @@ namespace MecHub.Controllers
             }
 
             TempData["Mensagem"] = "Se o e-mail estiver cadastrado, enviaremos as instruções.";
-            return RedirectToAction("Login", "Auth");
+            return RedirectToAction("LoginLocal", "Auth");
         }
 
         [HttpGet]
