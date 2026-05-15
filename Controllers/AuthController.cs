@@ -335,7 +335,8 @@ namespace MecHub.Controllers
                 "ResetarSenha",
                 "Auth",
                 new { email = usuario.Email, token = token },
-                protocol: "https"
+                protocol: "https",
+                host: "mechubapp.com.br"
             );
 
             try

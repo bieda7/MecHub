@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace MecHub.Controllers
 {
-    [Authorize]
+    // [Authorize]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class ConsultaVeiculo : Controller
     {
@@ -49,6 +49,7 @@ namespace MecHub.Controllers
             return RedirectToAction("Resultado", new { placa });
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Resultado(string placa)
         {
