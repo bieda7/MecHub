@@ -36,7 +36,8 @@ builder.Services.AddAuthentication(options =>
 });
 
 // EMAIL
-builder.Services.AddScoped<IEmailService, EmailService>();
+// builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddHttpClient<IEmailService, EmailService>();
 
 // QUESTPDF
 QuestPDF.Settings.License = LicenseType.Community;

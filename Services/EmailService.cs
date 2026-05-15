@@ -1,54 +1,46 @@
-using System.Net;
-using System.Net.Mail;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 
 namespace MecHub.Services;
 
 public class EmailService : IEmailService
 {
     private readonly IConfiguration _configuration;
+    private readonly HttpClient _httpClient;
 
-    public EmailService(IConfiguration configuration)
+    public EmailService(IConfiguration configuration, HttpClient httpClient)
     {
         _configuration = configuration;
+        _httpClient = httpClient;
     }
 
     public async Task EnviarEmailAsync(string destinatario, string assunto, string mensagem)
     {
-        var smtpHost = _configuration["Email:SmtpHost"];
-        var smtpPortTexto = _configuration["Email:SmtpPort"];
-        var smtpUser = _configuration["Email:Usuario"];
-        var smtpPass = _configuration["Email:Senha"];
+        var apiKey = _configuration["Resend:ApiKey"];
+        var from = _configuration["Resend:From"];
 
-        if (string.IsNullOrWhiteSpace(smtpHost) ||
-            string.IsNullOrWhiteSpace(smtpPortTexto) ||
-            string.IsNullOrWhiteSpace(smtpUser) ||
-            string.IsNullOrWhiteSpace(smtpPass))
-        {
-            throw new Exception("Configurações SMTP não encontradas. Verifique appsettings ou variáveis do Railway.");
-        }
+        if (string.IsNullOrWhiteSpace(apiKey) || string.IsNullOrWhiteSpace(from))
+            throw new Exception("Configurações do Resend não encontradas.");
 
-        if (!int.TryParse(smtpPortTexto, out var smtpPort))
+        var payload = new
         {
-            throw new Exception("Porta SMTP inválida.");
-        }
-
-        using var client = new SmtpClient(smtpHost, smtpPort)
-        {
-            Credentials = new NetworkCredential(smtpUser, smtpPass),
-            EnableSsl = true,
-            Timeout = 10000
+            from = from,
+            to = new[] { destinatario },
+            subject = assunto,
+            text = mensagem
         };
 
-        using var mail = new MailMessage
-        {
-            From = new MailAddress(smtpUser, "MecHub"),
-            Subject = assunto,
-            Body = mensagem,
-            IsBodyHtml = false
-        };
+        var json = JsonSerializer.Serialize(payload);
 
-        mail.To.Add(destinatario);
+        using var request = new HttpRequestMessage(HttpMethod.Post, "https://api.resend.com/emails");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+        request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        await client.SendMailAsync(mail);
+        var response = await _httpClient.SendAsync(request);
+        var responseBody = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+            throw new Exception($"Erro Resend: {response.StatusCode} - {responseBody}");
     }
 }

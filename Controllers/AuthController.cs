@@ -348,7 +348,14 @@ namespace MecHub.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro ao enviar e-mail: {ex}");
+                Console.WriteLine("ERRO SMTP COMPLETO:");
+                Console.WriteLine(ex.ToString());
+
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine("INNER EXCEPTION:");
+                    Console.WriteLine(ex.InnerException.ToString());
+                }
 
                 ModelState.AddModelError("", "Não foi possível enviar o e-mail agora. Verifique as configurações SMTP.");
                 return View(model);
