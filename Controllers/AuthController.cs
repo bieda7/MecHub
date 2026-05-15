@@ -348,10 +348,10 @@ namespace MecHub.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro ao enviar e-mail de recuperação: {ex.Message}");
+                Console.WriteLine($"Erro ao enviar e-mail: {ex}");
 
-                TempData["Mensagem"] = "Não foi possível enviar o e-mail agora. Tente novamente em alguns minutos.";
-                return RedirectToAction("EsqueciSenha", "Auth");
+                ModelState.AddModelError("", "Não foi possível enviar o e-mail agora. Verifique as configurações SMTP.");
+                return View(model);
             }
 
             TempData["Mensagem"] = "Se o e-mail estiver cadastrado, enviaremos as instruções.";

@@ -15,17 +15,31 @@ public class EmailService : IEmailService
     public async Task EnviarEmailAsync(string destinatario, string assunto, string mensagem)
     {
         var smtpHost = _configuration["Email:SmtpHost"];
-        var smtpPort = int.Parse(_configuration["Email:SmtpPort"]);
+        var smtpPortTexto = _configuration["Email:SmtpPort"];
         var smtpUser = _configuration["Email:Usuario"];
         var smtpPass = _configuration["Email:Senha"];
+
+        if (string.IsNullOrWhiteSpace(smtpHost) ||
+            string.IsNullOrWhiteSpace(smtpPortTexto) ||
+            string.IsNullOrWhiteSpace(smtpUser) ||
+            string.IsNullOrWhiteSpace(smtpPass))
+        {
+            throw new Exception("Configurações SMTP não encontradas. Verifique appsettings ou variáveis do Railway.");
+        }
+
+        if (!int.TryParse(smtpPortTexto, out var smtpPort))
+        {
+            throw new Exception("Porta SMTP inválida.");
+        }
 
         using var client = new SmtpClient(smtpHost, smtpPort)
         {
             Credentials = new NetworkCredential(smtpUser, smtpPass),
-            EnableSsl = true
+            EnableSsl = true,
+            Timeout = 10000
         };
 
-        var mail = new MailMessage
+        using var mail = new MailMessage
         {
             From = new MailAddress(smtpUser, "MecHub"),
             Subject = assunto,
