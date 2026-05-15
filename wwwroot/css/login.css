@@ -363,6 +363,36 @@ body {
     accent-color: var(--red);
 }
 
+.login-description {
+    position: relative;
+    z-index: 1;
+
+    color: var(--muted);
+    text-align: center;
+
+    font-size: 0.9rem;
+    line-height: 1.5;
+
+    margin: -12px 0 24px;
+    max-width: 330px;
+}
+
+.validation-summary {
+    width: 100%;
+    color: #ff4b65;
+    font-size: 0.86rem;
+    margin-bottom: 14px;
+    text-align: center;
+}
+
+.field-error {
+    display: block;
+    color: #ff4b65;
+    font-size: 0.82rem;
+    margin-top: 6px;
+    padding-left: 14px;
+}
+
 /* RESPONSIVO */
 @media (max-width: 576px) {
     .register-header {

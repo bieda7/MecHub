@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using MecHub.Data;
 using MecHub.Models;
 using MecHub.ViewModel;
+using MecHub.Services;
 
 // Usado para trabalhar com Claims do usuário logado
 using System.Security.Claims;
@@ -30,6 +31,7 @@ namespace MecHub.Controllers
     {
         // Contexto do banco de dados
         private readonly AppDbContext _context;
+        private readonly IEmailService _emailService;
 
         private int ObterMecanicoId()
         {
@@ -42,9 +44,10 @@ namespace MecHub.Controllers
         }
 
         // Injeção de dependência do AppDbContext
-        public AuthController(AppDbContext context)
+        public AuthController(AppDbContext context, IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         // Apenas uma rota simples para testar o login com Google
@@ -294,6 +297,100 @@ namespace MecHub.Controllers
                         : DateTimeOffset.UtcNow.AddHours(8)
                 }
             );
+        }
+
+        [HttpGet]
+        public IActionResult EsqueciSenha()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EsqueciSenha(EsqueciSenhaViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var usuario = await _context.usuario
+                .FirstOrDefaultAsync(u => u.Email == model.Email);
+
+            if (usuario == null)
+            {
+                TempData["Mensagem"] = "Se o e-mail estiver cadastrado, enviaremos as instruções.";
+                return RedirectToAction("LoginLocal", "Auth");
+            }
+
+            var tokenBytes = System.Security.Cryptography.RandomNumberGenerator.GetBytes(64);
+            var token = Convert.ToBase64String(tokenBytes);
+
+            usuario.ResetSenhaToken = token;
+            usuario.ResetSenhaExpiraEm = DateTime.UtcNow.AddMinutes(30);
+
+            await _context.SaveChangesAsync();
+
+            var link = Url.Action(
+                "ResetarSenha",
+                "Auth",
+                new { email = usuario.Email, token = token },
+                protocol: Request.Scheme
+            );
+
+            await _emailService.EnviarEmailAsync(
+                usuario.Email,
+                "Redefinição de senha - MecHub",
+                $"Olá! Clique no link abaixo para redefinir sua senha:\n\n{link}\n\nEsse link expira em 30 minutos."
+            );
+
+            TempData["Mensagem"] = "Se o e-mail estiver cadastrado, enviaremos as instruções.";
+            return RedirectToAction("LoginLocal", "Auth");
+        }
+
+        [HttpGet]
+        public IActionResult ResetarSenha(string email, string token)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
+                return RedirectToAction("LoginLocal", "Auth");
+
+            var model = new ResetarSenhaViewModel
+            {
+                Email = email,
+                Token = token
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetarSenha(ResetarSenhaViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var usuario = await _context.usuario
+                .FirstOrDefaultAsync(u =>
+                    u.Email == model.Email &&
+                    u.ResetSenhaToken == model.Token &&
+                    u.ResetSenhaExpiraEm > DateTime.UtcNow
+                );
+
+            if (usuario == null)
+            {
+                ModelState.AddModelError("", "Link inválido ou expirado.");
+                return View(model);
+            }
+
+            var hasher = new PasswordHasher<Usuario>();
+            usuario.Senha = hasher.HashPassword(usuario, model.NovaSenha);
+
+            usuario.ResetSenhaToken = null;
+            usuario.ResetSenhaExpiraEm = null;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Mensagem"] = "Senha redefinida com sucesso. Faça login novamente.";
+            return RedirectToAction("LoginLocal", "Auth");
         }
     }
 }

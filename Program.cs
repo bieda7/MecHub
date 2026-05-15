@@ -35,6 +35,9 @@ builder.Services.AddAuthentication(options =>
     options.ClientSecret = "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";
 });
 
+// EMAIL
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 // QUESTPDF
 QuestPDF.Settings.License = LicenseType.Community;
 

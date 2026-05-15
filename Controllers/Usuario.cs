@@ -171,6 +171,38 @@ namespace MecHub.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult TrocarSenha(int id, UsuarioEditViewModel model)
+        {
+            if (id != model.Id)
+                return BadRequest();
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var usuario = _context.usuario.Find(id);
+
+            if (usuario == null)
+                return NotFound();
+
+            usuario.Nome = model.Nome;
+            usuario.Email = model.Email;
+            // usuario.Senha = model.Senha;
+
+            try
+            {
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Erro ao atualizar usuário.");
+                return View(model);
+            }
+        }
+
+
         // 🔹 DELETAR (GET - confirmação)
         [HttpGet]
         public IActionResult Deletar(int id)

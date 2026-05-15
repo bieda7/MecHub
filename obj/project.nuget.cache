@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "ZdfxGF3wrmM=",
+  "dgSpecHash": "s1CJl3euvwQ=",
   "success": true,
   "projectFilePath": "C:\\Users\\Guilherne\\MecHub\\MecHub.csproj",
   "expectedPackageFiles": [
@@ -52,7 +52,7 @@
     "C:\\Users\\Guilherne\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.25\\microsoft.netcore.app.ref.8.0.25.nupkg.sha512",
     "C:\\Users\\Guilherne\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.25\\microsoft.windowsdesktop.app.ref.8.0.25.nupkg.sha512",
     "C:\\Users\\Guilherne\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.25\\microsoft.aspnetcore.app.ref.8.0.25.nupkg.sha512",
-    "C:\\Users\\Guilherne\\.nuget\\packages\\microsoft.netcore.app.host.win-arm64\\8.0.25\\microsoft.netcore.app.host.win-arm64.8.0.25.nupkg.sha512"
+    "C:\\Users\\Guilherne\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\8.0.25\\microsoft.netcore.app.host.win-x64.8.0.25.nupkg.sha512"
   ],
   "logs": []
 }

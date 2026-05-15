@@ -139,3 +139,4 @@ C:\Users\Guilherne\MecHub\obj\Debug\net8.0\win-x64\refint\MecHub.dll
 C:\Users\Guilherne\MecHub\obj\Debug\net8.0\win-x64\MecHub.pdb
 C:\Users\Guilherne\MecHub\obj\Debug\net8.0\win-x64\MecHub.genruntimeconfig.cache
 C:\Users\Guilherne\MecHub\obj\Debug\net8.0\win-x64\ref\MecHub.dll
+C:\Users\Guilherne\MecHub\bin\Debug\net8.0\win-x64\railway.json
