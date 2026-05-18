@@ -49,7 +49,7 @@ namespace MecHub.Controllers
             return RedirectToAction("Resultado", new { placa });
         }
 
-        [Authorize]
+        // [Authorize]
         [HttpGet]
         public IActionResult Resultado(string placa)
         {
