@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using QuestPDF.Infrastructure;
 using MecHub.Services;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var supportedCultures = new[]
 {
@@ -61,10 +62,24 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // MVC
 builder.Services.AddControllersWithViews();
 
+// FORWARDED HEADERS - Railway/Proxy HTTPS
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto;
+
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
+
+// FORWARDED HEADERS - precisa vir antes do HTTPS
+app.UseForwardedHeaders();
 
 // PIPELINE
 if (!app.Environment.IsDevelopment())
