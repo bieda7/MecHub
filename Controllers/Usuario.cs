@@ -16,15 +16,6 @@ namespace MecHub.Controllers
     {
         private readonly AppDbContext _context;
 
-        private int ObterMecanicoId()
-        {
-            var mecanicoId = User.FindFirstValue("MecanicoId");
-
-            if (string.IsNullOrWhiteSpace(mecanicoId))
-                throw new UnauthorizedAccessException("MecanicoId não encontrado na sessão.");
-
-            return int.Parse(mecanicoId);
-        }
         public UsuarioController(AppDbContext context)
         {
             _context = context;
@@ -45,6 +36,15 @@ namespace MecHub.Controllers
                 .ToList();
 
             return View(usuarios);
+        }
+        private int ObterMecanicoId()
+        {
+            var mecanicoId = User.FindFirstValue("MecanicoId");
+
+            if (string.IsNullOrWhiteSpace(mecanicoId))
+                throw new UnauthorizedAccessException("MecanicoId não encontrado na sessão.");
+
+            return int.Parse(mecanicoId);
         }
 
         // 🔹 DETALHE

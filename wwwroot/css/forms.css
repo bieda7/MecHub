@@ -445,6 +445,7 @@ body {
    RESPONSIVO
 ========================= */
 
+/*Determina o comportamento dos componentes visuais quando a tela atingir tamanho inferiror a 768px*/
 @media (max-width: 768px) {
     .register-header {
         flex-direction: column;

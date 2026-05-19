@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MecHub.ViewModel
 {
+/// ViewModel responsável por intermediar a comunicação entre a View (front-end)
+/// e o Controller (back-end), transportando apenas os dados necessários para a interface,
+/// sem expor diretamente as entidades do banco de dados.
     public class ClienteCreateViewModel
     {
         public int Id { get; set; }

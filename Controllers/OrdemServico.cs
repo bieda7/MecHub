@@ -34,6 +34,8 @@ namespace MecHub.Controllers
 
         }
 
+        // FUNÇÃO/MÉTODO RESPONSÁVEL POR EXIBIR DE FORMA ORDENADA AS ORDENS DE SERVIÇOS EXISTENTES NO BANCO DE DADOS
+        
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -116,6 +118,7 @@ namespace MecHub.Controllers
             return View(model);
         }
 
+        // FUNÇÃO/MÉTODO RESPONSÁVEL POR CRIAR NOVAS ORDENS DE SERVIÇOS
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Criar(OrdemServicoCreateViewModel model)
